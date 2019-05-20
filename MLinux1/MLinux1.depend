@@ -32,3 +32,31 @@
 	"stack.h"
 	"directory.h"
 
+1558371081 source:c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\directory.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"main.h"
+
+1558223593 c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\main.h
+	"stack.h"
+	"directory.h"
+
+1558223663 c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\stack.h
+	"main.h"
+
+1558369448 c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\directory.h
+	"main.h"
+
+1558369379 source:c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"main.h"
+
+1558239009 source:c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\stack.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"main.h"
+

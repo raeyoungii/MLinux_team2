@@ -19,6 +19,30 @@ DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName)
     return returnNode;
 }
 
+void PrintPermission(int dirMode)
+{
+    char buf[4];
+    sprintf(buf, "%d", dirMode);
+
+    for(int i=0;i<3;i++){
+        if( buf[i] == '7' )
+			printf("rwx");
+		else if( buf[i] == '6' )
+			printf("rw-");
+		else if( buf[i] == '5' )
+			printf("r-x");
+		else if( buf[i] == '4' )
+			printf("r--");
+		else if( buf[i] == '3' )
+			printf("-wx");
+		else if( buf[i] == '2')
+			printf("-w-");
+		else if( buf[i] == '1')
+			printf("--x");
+		else
+			printf("---");
+    }
+}
 //cd
 int Movecurrent(DirectoryTree* dirTree, char* dirPath)
 {
@@ -89,15 +113,6 @@ DirectoryTree* InitializeTree()
     strncpy(NewNode->name, "/", MAX_NAME);
     //rwxr-xr-x
     NewNode->mode = 755;
-    NewNode->permission[0] = 1;
-    NewNode->permission[1] = 1;
-    NewNode->permission[2] = 1;
-    NewNode->permission[3] = 1;
-    NewNode->permission[4] = 0;
-    NewNode->permission[5] = 1;
-    NewNode->permission[6] = 1;
-    NewNode->permission[7] = 0;
-    NewNode->permission[8] = 1;
     strncpy(NewNode->username, "root", MAX_NAME);
     strncpy(NewNode->groupname, "root", MAX_NAME);
     NewNode->Parent = NULL;
@@ -124,6 +139,8 @@ int MakeDir(DirectoryTree* dirTree, char* dirName)
 
     //set NewNode
     strncpy(NewNode->name, dirName, MAX_NAME);
+    //rwxr-xr-x
+    NewNode->mode = 755;
     strcpy(NewNode->username,"root");
 	strcpy(NewNode->groupname,"root");
 	NewNode->Parent = dirTree->current;
@@ -201,16 +218,16 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
                     continue;
                 }
             }
+            PrintPermission(tmpNode->mode);
+            printf("\t");
             /*
             printf("%c",type);
-            TransChmod( ShowNode->chmod );
             printf("%7s %7s     %d¿ù %d³â",tmpNode->username,tmpNode->groupname,tmpNode->month,tmpNode->year);
             */
             printf("%-15s\n", tmpNode->name);
             tmpNode = tmpNode->RightSibling;
         }
     }
-
 }
 
 //rmdir

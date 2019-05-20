@@ -29,6 +29,7 @@ typedef struct tagDirectoryTree{
 
 //utility
 DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName);
+void PrintPermission(int dirMode);
 //cd
 int Movecurrent(DirectoryTree* dirTree, char* dirPath);
 int MovePath(DirectoryTree* dirTree, char* dirPath);
