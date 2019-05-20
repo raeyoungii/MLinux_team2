@@ -38,10 +38,14 @@
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="main.h" />
 		<Unit filename="stack.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="stack.h" />
+		<Unit filename="time.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
