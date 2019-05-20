@@ -23,18 +23,18 @@ void Mode2Permission(DirectoryNode* dirNode)
 {
     char buf[3];
     int tmp;
-    int k;
+    int j;
 
     sprintf(buf, "%d", dirNode->mode);
 
     for(int i=0;i<3;i++){
         tmp = buf[i] - '0';
-        k = 2;
+        j = 2;
 
         while(tmp != 0){
-        dirNode->permission[3*i+k] = tmp%2;
+        dirNode->permission[3*i+j] = tmp%2;
         tmp/=2;
-        k--;
+        j--;
         }
     }
 }
@@ -211,6 +211,12 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
     }
 
     if(l == 0){
+        if(a == 1){
+            printf(".\t");
+            if(dirTree->current != dirTree->root)
+                printf("..\t");
+        }
+
         while(tmpNode != NULL){
             if(a == 0){
                 if(strncmp(tmpNode->name,".",1) == 0){
@@ -218,11 +224,19 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
                     continue;
                 }
             }
-            printf("%-15s", tmpNode->name);
+            printf("%s\t", tmpNode->name);
             tmpNode = tmpNode->RightSibling;
         }
     }
     else{
+        if(a == 1){
+            printf("%c", dirTree->current->type);
+            PrintPermission;
+            printf(".\t");
+            if(dirTree->current != dirTree->root)
+                printf("..\t");
+        }
+
         while(tmpNode != NULL){
             if(a == 0){
                 if(strncmp(tmpNode->name,".",1) == 0){
@@ -232,6 +246,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             }
             printf("%c", tmpNode->type);
             PrintPermission(tmpNode);
+            printf(",");
             printf("\t");
             /*
             printf("%c",type);

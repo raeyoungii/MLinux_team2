@@ -70,7 +70,7 @@ int main()
     //cd(Linux, "aaa");
     //PrintPath(Linux, dStack);
 
-    ls(Linux, "-l");
+    ls(Linux, "-a");
 
     return 0;
 }
