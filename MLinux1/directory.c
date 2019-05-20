@@ -19,28 +19,36 @@ DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName)
     return returnNode;
 }
 
-void PrintPermission(int dirMode)
+void Mode2Permission(DirectoryNode* dirNode)
 {
-    char buf[4];
-    sprintf(buf, "%d", dirMode);
+    char buf[3];
+    int tmp;
+    int k;
+
+    sprintf(buf, "%d", dirNode->mode);
 
     for(int i=0;i<3;i++){
-        if( buf[i] == '7' )
-			printf("rwx");
-		else if( buf[i] == '6' )
-			printf("rw-");
-		else if( buf[i] == '5' )
-			printf("r-x");
-		else if( buf[i] == '4' )
-			printf("r--");
-		else if( buf[i] == '3' )
-			printf("-wx");
-		else if( buf[i] == '2')
-			printf("-w-");
-		else if( buf[i] == '1')
-			printf("--x");
-		else
-			printf("---");
+        tmp = buf[i] - '0';
+        k = 2;
+
+        while(tmp != 0){
+        dirNode->permission[3*i+k] = tmp%2;
+        tmp/=2;
+        k--;
+        }
+    }
+}
+void PrintPermission(DirectoryNode* dirNode)
+{
+    char rwx[3] = "rwx";
+
+    for(int i=0;i<3;i++){
+        for(int j=0;j<3;j++){
+            if(dirNode->permission[3*i+j] == 1)
+                printf("%c", rwx[j]);
+            else
+                printf("-");
+        }
     }
 }
 //cd
@@ -112,7 +120,9 @@ DirectoryTree* InitializeTree()
     //set NewNode
     strncpy(NewNode->name, "/", MAX_NAME);
     //rwxr-xr-x
+    NewNode->type ='d';
     NewNode->mode = 755;
+    Mode2Permission(NewNode);
     strncpy(NewNode->username, "root", MAX_NAME);
     strncpy(NewNode->groupname, "root", MAX_NAME);
     NewNode->Parent = NULL;
@@ -140,7 +150,9 @@ int MakeDir(DirectoryTree* dirTree, char* dirName)
     //set NewNode
     strncpy(NewNode->name, dirName, MAX_NAME);
     //rwxr-xr-x
+    NewNode->type ='d';
     NewNode->mode = 755;
+    Mode2Permission(NewNode);
     strcpy(NewNode->username,"root");
 	strcpy(NewNode->groupname,"root");
 	NewNode->Parent = dirTree->current;
@@ -218,7 +230,8 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
                     continue;
                 }
             }
-            PrintPermission(tmpNode->mode);
+            printf("%c", tmpNode->type);
+            PrintPermission(tmpNode);
             printf("\t");
             /*
             printf("%c",type);
