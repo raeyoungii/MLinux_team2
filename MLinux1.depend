@@ -1,0 +1,34 @@
+# depslib dependency file v1.0
+1558248806 source:c:\users\rae young kim\documents\codeblocks\mlinux1\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"main.h"
+
+1558223663 c:\users\rae young kim\documents\codeblocks\mlinux1\stack.h
+	"main.h"
+
+1558239009 source:c:\users\rae young kim\documents\codeblocks\mlinux1\stack.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"main.h"
+
+1558222473 source:c:\users\rae young kim\documents\codeblocks\mlinux1\stack.h
+
+1558252521 c:\users\rae young kim\documents\codeblocks\mlinux1\directory.h
+	"main.h"
+
+1558248950 source:c:\users\rae young kim\documents\codeblocks\mlinux1\directory.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"main.h"
+
+1558222749 source:c:\users\rae young kim\documents\codeblocks\mlinux1\directory.h
+	"stack.h"
+
+1558223593 c:\users\rae young kim\documents\codeblocks\mlinux1\main.h
+	"stack.h"
+	"directory.h"
+
