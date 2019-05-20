@@ -50,6 +50,7 @@ void PrintPermission(DirectoryNode* dirNode)
                 printf("-");
         }
     }
+    printf(",");
 }
 //cd
 int Movecurrent(DirectoryTree* dirTree, char* dirPath)
@@ -117,6 +118,8 @@ DirectoryTree* InitializeTree()
     DirectoryTree* dirTree = (DirectoryTree*)malloc(sizeof(DirectoryTree));
     DirectoryNode* NewNode = (DirectoryNode*)malloc(sizeof(DirectoryNode));
 
+    time(&ltime);
+    today = localtime(&ltime);
     //set NewNode
     strncpy(NewNode->name, "/", MAX_NAME);
     //rwxr-xr-x
@@ -125,6 +128,7 @@ DirectoryTree* InitializeTree()
     Mode2Permission(NewNode);
     strncpy(NewNode->username, "root", MAX_NAME);
     strncpy(NewNode->groupname, "root", MAX_NAME);
+
     NewNode->Parent = NULL;
     NewNode->LeftChild = NULL;
     NewNode->RightSibling = NULL;
@@ -231,10 +235,16 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
     else{
         if(a == 1){
             printf("%c", dirTree->current->type);
-            PrintPermission;
-            printf(".\t");
-            if(dirTree->current != dirTree->root)
-                printf("..\t");
+            PrintPermission(dirTree->current);
+            printf("\t");
+            printf(".\t\n");
+
+            if(dirTree->current != dirTree->root){
+                printf("%c", dirTree->current->Parent->type);
+                PrintPermission(dirTree->current->Parent);
+                printf("\t");
+                printf("..\t\n");
+            }
         }
 
         while(tmpNode != NULL){
@@ -246,7 +256,6 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             }
             printf("%c", tmpNode->type);
             PrintPermission(tmpNode);
-            printf(",");
             printf("\t");
             /*
             printf("%c",type);

@@ -10,10 +10,6 @@ typedef struct tagDirectoryNode{
     int permission[9];
     char username[MAX_NAME];
 	char groupname[MAX_NAME];
-    int month;
-    int day;
-    int hour;
-    int minute;
 
 	struct tagDirectoryNode* Parent;
 	struct tagDirectoryNode* LeftChild;

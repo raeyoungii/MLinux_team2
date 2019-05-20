@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "main.h"
 
 //command
@@ -70,7 +71,7 @@ int main()
     //cd(Linux, "aaa");
     //PrintPath(Linux, dStack);
 
-    ls(Linux, "-a");
+    ls(Linux, "-al");
 
     return 0;
 }
