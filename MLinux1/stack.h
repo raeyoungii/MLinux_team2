@@ -1,3 +1,4 @@
+#include <string.h>
 #include "main.h"
 #ifndef STACK_H
 #define STACK_H
@@ -9,7 +10,6 @@ typedef struct tagStackNode{
 }StackNode;
 
 typedef struct tagStack{
-	//int ptr;
 	StackNode* TopNode;
 }Stack;
 

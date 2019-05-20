@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include "main.h"
 
 //command
@@ -67,10 +65,21 @@ int main()
     //printf("/%s\n", Linux->current->name);
 
     //cd(Linux, "/user/bbb");
+    cd(Linux, "/user/Documents");
 
-    //cd(Linux, "aaa");
-    //PrintPath(Linux, dStack);
+    printf("cd aaa\n");
+    cd(Linux, "aaa");
 
+    printf("pwd\n");
+    PrintPath(Linux, dStack);
+
+    printf("cd ..\n");
+    cd(Linux, "..");
+
+    printf("cd ..\n");
+    cd(Linux, "..");
+
+    printf("ls -al\n");
     ls(Linux, "-al");
 
     return 0;

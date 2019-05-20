@@ -1,3 +1,5 @@
+#include <string.h>
+#include <time.h>
 #include "main.h"
 #ifndef DIRECTORY_H
 #define DIRECTORY_H
@@ -10,7 +12,11 @@ typedef struct tagDirectoryNode{
     int permission[9];
     char username[MAX_NAME];
 	char groupname[MAX_NAME];
-
+	int volume;
+	int month;
+    int day;
+    int hour;
+    int minute;
 	struct tagDirectoryNode* Parent;
 	struct tagDirectoryNode* LeftChild;
 	struct tagDirectoryNode* RightSibling;
@@ -22,6 +28,10 @@ typedef struct tagDirectoryTree{
 	DirectoryNode* root;
 	DirectoryNode* current;
 }DirectoryTree;
+
+//time
+time_t ltime;
+struct tm *today;
 
 //utility
 DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName);

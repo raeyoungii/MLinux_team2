@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "main.h"
 
 //utility
@@ -109,6 +108,7 @@ int MovePath(DirectoryTree* dirTree, char* dirPath)
             str = strtok( NULL, "/");
         }
     }
+    return 0;
 }
 
 //mkdir
@@ -117,7 +117,7 @@ DirectoryTree* InitializeTree()
     //variables
     DirectoryTree* dirTree = (DirectoryTree*)malloc(sizeof(DirectoryTree));
     DirectoryNode* NewNode = (DirectoryNode*)malloc(sizeof(DirectoryNode));
-
+    //get time
     time(&ltime);
     today = localtime(&ltime);
     //set NewNode
@@ -128,7 +128,11 @@ DirectoryTree* InitializeTree()
     Mode2Permission(NewNode);
     strncpy(NewNode->username, "root", MAX_NAME);
     strncpy(NewNode->groupname, "root", MAX_NAME);
-
+    NewNode->volume = 4096;
+    NewNode->month = today->tm_mon+1;
+    NewNode->day = today->tm_mday;
+    NewNode->hour = today->tm_hour;
+    NewNode->minute = today->tm_min;
     NewNode->Parent = NULL;
     NewNode->LeftChild = NULL;
     NewNode->RightSibling = NULL;
@@ -147,6 +151,10 @@ int MakeDir(DirectoryTree* dirTree, char* dirName)
     DirectoryNode* NewNode = (DirectoryNode*)malloc(sizeof(DirectoryNode));
     DirectoryNode* tmpNode = NULL;
 
+    //get time
+    time(&ltime);
+    today = localtime(&ltime);
+
     //initialize NewNode
     NewNode->LeftChild = NULL;
     NewNode->RightSibling = NULL;
@@ -157,6 +165,13 @@ int MakeDir(DirectoryTree* dirTree, char* dirName)
     NewNode->type ='d';
     NewNode->mode = 755;
     Mode2Permission(NewNode);
+    strncpy(NewNode->username, "root", MAX_NAME);
+    strncpy(NewNode->groupname, "root", MAX_NAME);
+    NewNode->volume = 4096;
+    NewNode->month = today->tm_mon + 1;
+    NewNode->day = today->tm_mday;
+    NewNode->hour = today->tm_hour;
+    NewNode->minute = today->tm_min;
     strcpy(NewNode->username,"root");
 	strcpy(NewNode->groupname,"root");
 	NewNode->Parent = dirTree->current;
@@ -200,6 +215,7 @@ void PrintPath(DirectoryTree* dirTree, Stack* dirStack)
             printf("%s",Pop(dirStack));
         }
     }
+    printf("\n");
 }
 
 int ListDir(DirectoryTree* dirTree, int a, int l)
@@ -236,14 +252,22 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
         if(a == 1){
             printf("%c", dirTree->current->type);
             PrintPermission(dirTree->current);
-            printf("\t");
-            printf(".\t\n");
+            printf("  ");
+            printf("%-5s%-5s", dirTree->current->username, dirTree->current->groupname);
+            printf("%5d ", dirTree->current->volume);
+            GetMonth(dirTree->current->month);
+            printf(" %d %02d:%02d ", dirTree->current->day, dirTree->current->hour, dirTree->current->minute);
+            printf(".\n");
 
             if(dirTree->current != dirTree->root){
                 printf("%c", dirTree->current->Parent->type);
                 PrintPermission(dirTree->current->Parent);
-                printf("\t");
-                printf("..\t\n");
+                printf("  ");
+                printf("%-5s%-5s", dirTree->current->Parent->username, dirTree->current->Parent->groupname);
+                printf("%5d ", dirTree->current->volume);
+                GetMonth(dirTree->current->month);
+                printf(" %d %02d:%02d ", dirTree->current->Parent->day, dirTree->current->Parent->hour, dirTree->current->Parent->minute);
+                printf("..\n");
             }
         }
 
@@ -256,15 +280,17 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             }
             printf("%c", tmpNode->type);
             PrintPermission(tmpNode);
-            printf("\t");
-            /*
-            printf("%c",type);
-            printf("%7s %7s     %d¿ù %d³â",tmpNode->username,tmpNode->groupname,tmpNode->month,tmpNode->year);
-            */
+            printf("  ");
+            printf("%-5s%-5s", tmpNode->username, tmpNode->groupname);
+            printf("%5d ", tmpNode->volume);
+            GetMonth(tmpNode->month);
+            printf(" %d %02d:%02d ", tmpNode->day, tmpNode->hour, tmpNode->minute);
+
             printf("%-15s\n", tmpNode->name);
             tmpNode = tmpNode->RightSibling;
         }
     }
+    return 0;
 }
 
 //rmdir
