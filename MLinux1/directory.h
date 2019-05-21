@@ -34,9 +34,11 @@ time_t ltime;
 struct tm *today;
 
 //utility
-DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName);
 void Mode2Permission(DirectoryNode* dirNode);
 void PrintPermission(DirectoryNode* dirNode);
+void DestroyNode(DirectoryNode* dirNode);
+void DestroyDir(DirectoryNode* dirNode);
+DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName);
 
 //cd
 int Movecurrent(DirectoryTree* dirTree, char* dirPath);

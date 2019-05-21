@@ -3,21 +3,6 @@
 #include "main.h"
 
 //utility
-DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName)
-{
-    //variables
-    DirectoryNode* returnNode = NULL;
-
-    returnNode = dirTree->current->LeftChild;
-
-    while(returnNode != NULL){
-        if(strcmp(returnNode->name, dirName) == 0)
-            break;
-        returnNode = returnNode->RightSibling;
-    }
-    return returnNode;
-}
-
 void Mode2Permission(DirectoryNode* dirNode)
 {
     char buf[3];
@@ -51,6 +36,42 @@ void PrintPermission(DirectoryNode* dirNode)
     }
     printf(",");
 }
+
+void DestroyNode(DirectoryNode* dirNode)
+{
+    free(dirNode);
+}
+
+void DestroyDir(DirectoryNode* dirNode)
+{
+    if(dirNode->RightSibling != NULL){
+        FreeDir(dirNode->RightSibling);
+    }
+    if(dirNode->LeftChild != NULL){
+        FreeDir(dirNode->LeftChild);
+    }
+
+    dirNode->LeftChild = NULL;
+    dirNode->RightSibling = NULL;
+
+    DestroyNode(dirNode);
+}
+
+DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName)
+{
+    //variables
+    DirectoryNode* returnNode = NULL;
+
+    returnNode = dirTree->current->LeftChild;
+
+    while(returnNode != NULL){
+        if(strcmp(returnNode->name, dirName) == 0)
+            break;
+        returnNode = returnNode->RightSibling;
+    }
+    return returnNode;
+}
+
 //cd
 int Movecurrent(DirectoryTree* dirTree, char* dirPath)
 {
@@ -188,6 +209,47 @@ int MakeDir(DirectoryTree* dirTree, char* dirName)
 
     return 0;
 }
+
+int DeleteDir(DirectoryTree* dirTree, char* dirName)
+{
+    DirectoryNode* DelNode = NULL;
+    DirectoryNode* tmpNode = NULL;
+    DirectoryNode* prevNode = NULL;
+
+    tmpNode = dirTree->current->LeftChild;
+
+    if(tmpNode == NULL){
+        printf("No directory");
+        return -1;
+    }
+
+    if(strcmp(tmpNode->name, dirName) == 0){
+        dirTree->current->LeftChild = tmpNode->RightSibling;
+        DelNode = tmpNode;
+
+        DestroyDir(DelNode->LeftChild);
+        DestroyNode(DelNode);
+    }
+    else{
+
+        while(tmpNode != NULL){
+            if(strcmp(tmpNode->name, dirName) == 0){
+                DelNode = tmpNode;
+                break;
+            }
+            prevNode = tmpNode;
+            tmpNode = tmpNode->RightSibling;
+        }
+        if(DelNode != NULL){
+            prevNode->RightSibling = DelNode->Rightsibling;
+
+            DestroyDir(DelNode->LeftChild);
+            DestroyNode(DelNode);
+        }
+    }
+
+}
+
 
 //pwd
 void PrintPath(DirectoryTree* dirTree, Stack* dirStack)
