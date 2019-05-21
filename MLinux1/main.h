@@ -57,14 +57,15 @@ void DestroyDir(DirectoryNode* dirNode);
 DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName);
 
 
-//cd
-int Movecurrent(DirectoryTree* dirTree, char* dirPath);
-int MovePath(DirectoryTree* dirTree, char* dirPath);
+
 //mkdir
 DirectoryTree* InitializeTree();
 int MakeDir(DirectoryTree* dirTree, char* dirName);
 //rm
 int RemoveDir(DirectoryTree* dirTree, char* dirName);
+//cd
+int Movecurrent(DirectoryTree* dirTree, char* dirPath);
+int MovePath(DirectoryTree* dirTree, char* dirPath);
 //pwd
 void PrintPath(DirectoryTree* dirTree, Stack* dirStack);
 //ls

@@ -72,65 +72,6 @@ DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName)
     return returnNode;
 }
 
-//cd
-int Movecurrent(DirectoryTree* dirTree, char* dirPath)
-{
-    if(strcmp(dirPath,".") == 0){
-    }
-    else if(strcmp(dirPath,"..") == 0){
-        if(dirTree->current != dirTree->root){
-            dirTree->current = dirTree->current->Parent;
-            //strncpy(dirTree->currentname, dirTree->current->name, MAX_NAME);
-        }
-    }
-    else{
-        //if input path exist
-        if( IsExist(dirTree, dirPath) != NULL){
-            dirTree->current = IsExist(dirTree, dirPath);
-            //strncpy(dirTree->currentname, dirTree->current->name, MAX_NAME);
-        }
-        else
-            return -1;
-    }
-    return 0;
-}
-
-int MovePath(DirectoryTree* dirTree, char* dirPath)
-{
-    //variables
-    DirectoryNode* tmpNode = NULL;
-    char tmpPath[MAX_DIR];
-    char* str = NULL;
-    int val = 0;
-    //set tmp
-    strncpy(tmpPath, dirPath, MAX_DIR);
-    tmpNode = dirTree->current;
-    //if input is root
-    if(strcmp(dirPath, "/") == 0){
-        dirTree->current = dirTree->root;
-        //strncpy(dirTree->currentname, dirTree->current->name, MAX_NAME);
-    }
-    else{
-        //if input is absolute path
-        if(strncmp(dirPath, "/",1) == 0){
-            dirTree->current = dirTree->root;
-        }
-        //if input is relative path
-        str = strtok(tmpPath, "/");
-        while(str != NULL){
-            val = Movecurrent(dirTree, str);
-            //if input path doesn't exist
-            if(val == -1){
-                if(IsExist(dirTree, str) == NULL)
-                    printf("denied, directory doesn't exist.\n");
-                    dirTree->current = tmpNode;
-                return -1;
-            }
-            str = strtok( NULL, "/");
-        }
-    }
-    return 0;
-}
 
 //mkdir
 DirectoryTree* InitializeTree()
@@ -209,6 +150,7 @@ int MakeDir(DirectoryTree* dirTree, char* dirName)
 
     return 0;
 }
+
 //rm
 int RemoveDir(DirectoryTree* dirTree, char* dirName)
 {
@@ -226,8 +168,8 @@ int RemoveDir(DirectoryTree* dirTree, char* dirName)
     if(strcmp(tmpNode->name, dirName) == 0){
         dirTree->current->LeftChild = tmpNode->RightSibling;
         DelNode = tmpNode;
-
-        DestroyDir(DelNode->LeftChild);
+        if(DelNode->LeftChild != NULL)
+            DestroyDir(DelNode->LeftChild);
         DestroyNode(DelNode);
     }
     else{
@@ -242,7 +184,8 @@ int RemoveDir(DirectoryTree* dirTree, char* dirName)
         if(DelNode != NULL){
             prevNode->RightSibling = DelNode->RightSibling;
 
-            DestroyDir(DelNode->LeftChild);
+            if(DelNode->LeftChild != NULL)
+                DestroyDir(DelNode->LeftChild);
             DestroyNode(DelNode);
         }
         else{
@@ -253,6 +196,62 @@ int RemoveDir(DirectoryTree* dirTree, char* dirName)
     return 0;
 }
 
+//cd
+int Movecurrent(DirectoryTree* dirTree, char* dirPath)
+{
+    if(strcmp(dirPath,".") == 0){
+    }
+    else if(strcmp(dirPath,"..") == 0){
+        if(dirTree->current != dirTree->root){
+            dirTree->current = dirTree->current->Parent;
+        }
+    }
+    else{
+        //if input path exist
+        if( IsExist(dirTree, dirPath) != NULL){
+            dirTree->current = IsExist(dirTree, dirPath);
+        }
+        else
+            return -1;
+    }
+    return 0;
+}
+
+int MovePath(DirectoryTree* dirTree, char* dirPath)
+{
+    //variables
+    DirectoryNode* tmpNode = NULL;
+    char tmpPath[MAX_DIR];
+    char* str = NULL;
+    int val = 0;
+    //set tmp
+    strncpy(tmpPath, dirPath, MAX_DIR);
+    tmpNode = dirTree->current;
+    //if input is root
+    if(strcmp(dirPath, "/") == 0){
+        dirTree->current = dirTree->root;
+    }
+    else{
+        //if input is absolute path
+        if(strncmp(dirPath, "/",1) == 0){
+            dirTree->current = dirTree->root;
+        }
+        //if input is relative path
+        str = strtok(tmpPath, "/");
+        while(str != NULL){
+            val = Movecurrent(dirTree, str);
+            //if input path doesn't exist
+            if(val != 0){
+                if(IsExist(dirTree, str) == NULL)
+                    printf("denied, directory doesn't exist.\n");
+                    dirTree->current = tmpNode;
+                return -1;
+            }
+            str = strtok( NULL, "/");
+        }
+    }
+    return 0;
+}
 
 //pwd
 void PrintPath(DirectoryTree* dirTree, Stack* dirStack)
