@@ -82,4 +82,7 @@ char* Pop(Stack* dirStack);
 void GetMonth(int i);
 
 
+DirectoryTree* Linux;
+Stack* dStack;
+
 #endif // MAIN_H_
