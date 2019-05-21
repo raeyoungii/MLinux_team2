@@ -217,7 +217,7 @@ void PrintPath(DirectoryTree* dirTree, Stack* dirStack)
     }
     printf("\n");
 }
-
+//ls
 int ListDir(DirectoryTree* dirTree, int a, int l)
 {
     //variables
