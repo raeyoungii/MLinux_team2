@@ -34,7 +34,6 @@
 		<Unit filename="directory.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="directory.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -42,7 +41,6 @@
 		<Unit filename="stack.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="stack.h" />
 		<Unit filename="time.c">
 			<Option compilerVar="CC" />
 		</Unit>
