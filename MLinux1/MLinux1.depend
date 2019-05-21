@@ -32,7 +32,7 @@
 	"stack.h"
 	"directory.h"
 
-1558417823 source:c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\directory.c
+1558428025 source:c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\directory.c
 	<stdio.h>
 	<stdlib.h>
 	"main.h"
@@ -46,12 +46,12 @@
 	<string.h>
 	"main.h"
 
-1558383630 c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\directory.h
+1558428025 c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\directory.h
 	<string.h>
 	<time.h>
 	"main.h"
 
-1558384650 source:c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\main.c
+1558423806 source:c:\users\rae young kim\documents\github\mlinux_team2\mlinux1\main.c
 	<stdio.h>
 	<stdlib.h>
 	"main.h"

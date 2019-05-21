@@ -6,7 +6,6 @@
 void mkdir(DirectoryTree* dirTree, char* cmd)
 {
     MakeDir(dirTree, cmd);
-
 }
 
 void cd(DirectoryTree* dirTree, char* cmd)

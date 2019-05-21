@@ -10,9 +10,9 @@ typedef struct tagDirectoryNode{
     char type;
     int mode;
     int permission[9];
-    char username[MAX_NAME];
-	char groupname[MAX_NAME];
-	int volume;
+    int volume;
+    char UID[MAX_NAME];
+	char GID[MAX_NAME];
 	int month;
     int day;
     int hour;
