@@ -45,10 +45,10 @@ void DestroyNode(DirectoryNode* dirNode)
 void DestroyDir(DirectoryNode* dirNode)
 {
     if(dirNode->RightSibling != NULL){
-        FreeDir(dirNode->RightSibling);
+        DestroyDir(dirNode->RightSibling);
     }
     if(dirNode->LeftChild != NULL){
-        FreeDir(dirNode->LeftChild);
+        DestroyDir(dirNode->LeftChild);
     }
 
     dirNode->LeftChild = NULL;
@@ -99,11 +99,11 @@ int MovePath(DirectoryTree* dirTree, char* dirPath)
 {
     //variables
     DirectoryNode* tmpNode = NULL;
-    char tmpPath[MAX_PATH];
+    char tmpPath[MAX_DIR];
     char* str = NULL;
     int val = 0;
     //set tmp
-    strncpy(tmpPath, dirPath, MAX_PATH);
+    strncpy(tmpPath, dirPath, MAX_DIR);
     tmpNode = dirTree->current;
     //if input is root
     if(strcmp(dirPath, "/") == 0){
@@ -149,7 +149,7 @@ DirectoryTree* InitializeTree()
     Mode2Permission(NewNode);
     strncpy(NewNode->UID, "root", MAX_NAME);
     strncpy(NewNode->GID, "root", MAX_NAME);
-    NewNode->volume = 4096;
+    NewNode->SIZE = 4096;
     NewNode->month = today->tm_mon+1;
     NewNode->day = today->tm_mday;
     NewNode->hour = today->tm_hour;
@@ -188,7 +188,7 @@ int MakeDir(DirectoryTree* dirTree, char* dirName)
     Mode2Permission(NewNode);
     strncpy(NewNode->UID, "root", MAX_NAME);
     strncpy(NewNode->GID, "root", MAX_NAME);
-    NewNode->volume = 4096;
+    NewNode->SIZE = 4096;
     NewNode->month = today->tm_mon + 1;
     NewNode->day = today->tm_mday;
     NewNode->hour = today->tm_hour;
@@ -209,8 +209,8 @@ int MakeDir(DirectoryTree* dirTree, char* dirName)
 
     return 0;
 }
-
-int DeleteDir(DirectoryTree* dirTree, char* dirName)
+//rm
+int RemoveDir(DirectoryTree* dirTree, char* dirName)
 {
     DirectoryNode* DelNode = NULL;
     DirectoryNode* tmpNode = NULL;
@@ -219,7 +219,7 @@ int DeleteDir(DirectoryTree* dirTree, char* dirName)
     tmpNode = dirTree->current->LeftChild;
 
     if(tmpNode == NULL){
-        printf("No directory");
+        printf("No directory\n");
         return -1;
     }
 
@@ -231,7 +231,6 @@ int DeleteDir(DirectoryTree* dirTree, char* dirName)
         DestroyNode(DelNode);
     }
     else{
-
         while(tmpNode != NULL){
             if(strcmp(tmpNode->name, dirName) == 0){
                 DelNode = tmpNode;
@@ -241,13 +240,17 @@ int DeleteDir(DirectoryTree* dirTree, char* dirName)
             tmpNode = tmpNode->RightSibling;
         }
         if(DelNode != NULL){
-            prevNode->RightSibling = DelNode->Rightsibling;
+            prevNode->RightSibling = DelNode->RightSibling;
 
             DestroyDir(DelNode->LeftChild);
             DestroyNode(DelNode);
         }
+        else{
+            printf("No directory\n");
+            return -1;
+        }
     }
-
+    return 0;
 }
 
 
@@ -307,6 +310,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             printf("%s\t", tmpNode->name);
             tmpNode = tmpNode->RightSibling;
         }
+        printf("\n");
     }
     else{
         if(a == 1){
@@ -314,7 +318,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             PrintPermission(dirTree->current);
             printf("  ");
             printf("%-5s%-5s", dirTree->current->UID, dirTree->current->GID);
-            printf("%5d ", dirTree->current->volume);
+            printf("%5d ", dirTree->current->SIZE);
             GetMonth(dirTree->current->month);
             printf(" %d %02d:%02d ", dirTree->current->day, dirTree->current->hour, dirTree->current->minute);
             printf(".\n");
@@ -324,7 +328,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
                 PrintPermission(dirTree->current->Parent);
                 printf("  ");
                 printf("%-5s%-5s", dirTree->current->Parent->UID, dirTree->current->Parent->GID);
-                printf("%5d ", dirTree->current->volume);
+                printf("%5d ", dirTree->current->SIZE);
                 GetMonth(dirTree->current->month);
                 printf(" %d %02d:%02d ", dirTree->current->Parent->day, dirTree->current->Parent->hour, dirTree->current->Parent->minute);
                 printf("..\n");
@@ -342,7 +346,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             PrintPermission(tmpNode);
             printf("  ");
             printf("%-5s%-5s", tmpNode->UID, tmpNode->GID);
-            printf("%5d ", tmpNode->volume);
+            printf("%5d ", tmpNode->SIZE);
             GetMonth(tmpNode->month);
             printf(" %d %02d:%02d ", tmpNode->day, tmpNode->hour, tmpNode->minute);
 
@@ -353,11 +357,3 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
     return 0;
 }
 
-//rmdir
-/*BOOL DeleteDir(DirectoryTree* dirTree, char* dirName, int option)
-{
-    //variables
-    DirectoryNode* DeleteNode = NULL;
-    DirectoryNode*
-}
-*/

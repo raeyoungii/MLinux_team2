@@ -69,5 +69,5 @@ char* Pop(Stack* dirStack)
 	dirStack->TopNode = returnNode->LinkNode;
 	//dirStack->ptr--;
 
-	return &(returnNode->name);
+	return returnNode->name;
 }

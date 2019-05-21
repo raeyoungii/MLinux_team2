@@ -46,11 +46,11 @@ int MovePath(DirectoryTree* dirTree, char* dirPath);
 //mkdir
 DirectoryTree* InitializeTree();
 int MakeDir(DirectoryTree* dirTree, char* dirName);
+//rm
+int RemoveDir(DirectoryTree* dirTree, char* dirName);
 //pwd
 void PrintPath(DirectoryTree* dirTree, Stack* dirStack);
 //ls
 int ListDir(DirectoryTree* dirTree, int a, int l);
-//rmdir
-//BOOL DeleteDir(DirectoryTree* dirTree, char* dirName, int option);
 
 #endif // DIRECTORY_H

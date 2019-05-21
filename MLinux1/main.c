@@ -7,7 +7,10 @@ void mkdir(DirectoryTree* dirTree, char* cmd)
 {
     MakeDir(dirTree, cmd);
 }
-
+void rm(DirectoryTree* dirTree, char* cmd)
+{
+    RemoveDir(dirTree, cmd);
+}
 void cd(DirectoryTree* dirTree, char* cmd)
 {
     MovePath(dirTree, cmd);
@@ -42,28 +45,28 @@ int main()
 
     /**
             /(root) - user - Documents( - aaa), Downloads
-    **/
 
+    **/
     mkdir(Linux, "user");
     cd(Linux, "user");
-    //printf("/%s\n", Linux->current->name);
+
 
     mkdir(Linux, "Documents");
     mkdir(Linux, "Downloads");
 
     cd(Linux, "/user/Documents");
-    //printf("/%s\n", Linux->current->name);
+
 
     mkdir(Linux, "aaa");
     cd(Linux, "aaa");
-     //printf("/%s\n", Linux->current->name);
+
 
     cd(Linux, "..");
     cd(Linux, "..");
     mkdir(Linux, ".abc");
-    //printf("/%s\n", Linux->current->name);
 
-    //cd(Linux, "/user/bbb");
+
+
     cd(Linux, "/user/Documents");
 
     printf("cd aaa\n");
@@ -78,8 +81,13 @@ int main()
     printf("cd ..\n");
     cd(Linux, "..");
 
-    printf("ls -al\n");
-    ls(Linux, "-al");
+    printf("ls -l\n");
+    ls(Linux, "");
+
+    rm(Linux, "Documents");
+    ls(Linux, "");
+    rm(Linux, "Documents");
+    ls(Linux, "");
 
     return 0;
 }
