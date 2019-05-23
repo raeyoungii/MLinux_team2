@@ -45,7 +45,6 @@ int Push(Stack* dirStack, char* dirName)
 	dirNode->LinkNode = dirStack->TopNode;
 	//set dirStack
     dirStack->TopNode = dirNode;
-    //dirStack->ptr++;
 
     return 0;
 }
@@ -67,7 +66,6 @@ char* Pop(Stack* dirStack)
 	returnNode = dirStack->TopNode;
 	//set dirStack
 	dirStack->TopNode = returnNode->LinkNode;
-	//dirStack->ptr--;
 
 	return returnNode->name;
 }

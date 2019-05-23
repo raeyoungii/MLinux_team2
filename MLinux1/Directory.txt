@@ -1,0 +1,9 @@
+/ d 755 4096 root root 5 24 6 46
+aa d 755 4096 root root 5 24 6 46 /
+bb d 755 4096 root root 5 24 6 46 /
+cc d 755 4096 root root 5 24 8 3 /
+yes d 755 4096 root root 5 24 6 46 /bb
+no d 755 4096 root root 5 24 6 46 /bb/yes
+test1 d 755 4096 root root 5 24 6 46 /aa
+test2 d 755 4096 root root 5 24 6 46 /aa
+ccc d 755 4096 root root 5 24 6 46 /aa/test2
