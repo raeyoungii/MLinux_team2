@@ -123,7 +123,7 @@ int chmod(DirectoryTree* dirTree, char* cmd)
     char* str;
     int tmp;
 
-    if(strcmp(cmd, "-r") == 0){
+    if(strcmp(cmd, "-R") == 0){
         str = strtok(NULL, " ");
         if(str[0]-'0'<8 && str[1]-'0'<8 && str[2]-'0'<8 && strlen(str)==3){
             tmp = atoi(str);
