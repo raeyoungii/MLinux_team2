@@ -24,6 +24,7 @@ int Mode2Permission(DirectoryNode* dirNode)
 
     return 0;
 }
+
 void PrintPermission(DirectoryNode* dirNode)
 {
     char rwx[3] = "rwx";
@@ -534,7 +535,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
                     cnt++;
                 }
             }
-            if(o == 3){
+            else if(o == 3){
                 if(buf[strlen(buf)-1] == '\n' && buf[0] != '\n'){
                     printf("%d ",cnt);
                     cnt++;
@@ -584,6 +585,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
     return 0;
 }
 
+
 //chmod
 int ChangeMode(DirectoryTree* dirTree, int mode, char* dirName)
 {
@@ -601,6 +603,7 @@ int ChangeMode(DirectoryTree* dirTree, int mode, char* dirName)
     }
     return 0;
 }
+
 void ChangeModeAll(DirectoryNode* dirNode, int mode)
 {
     if(dirNode->RightSibling != NULL){
