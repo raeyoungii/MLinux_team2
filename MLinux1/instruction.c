@@ -107,6 +107,10 @@ int cat(DirectoryTree* dirTree, char* cmd)
         str = strtok(NULL, " ");
         Concatenate(dirTree, str, 2);
     }
+    else if(strcmp(cmd, "-b")== 0){
+        str = strtok(NULL, " ");
+        Concatenate(dirTree, str, 3);
+    }
     else{
         Concatenate(dirTree, cmd, 1);
     }

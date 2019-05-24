@@ -534,6 +534,12 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
                     cnt++;
                 }
             }
+            if(o == 3){
+                if(buf[strlen(buf)-1] == '\n' && buf[0] != '\n'){
+                    printf("%d ",cnt);
+                    cnt++;
+                }
+            }
             fputs(buf, stdout);
         }
 
