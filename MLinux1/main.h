@@ -77,7 +77,9 @@ void PrintPath(DirectoryTree* dirTree, Stack* dirStack);
 int ListDir(DirectoryTree* dirTree, int a, int l);
 //cat
 int Concatenate(DirectoryTree* dirTree, char* fName, int o);
-
+//chmod
+int ChangeMode(DirectoryTree* dirTree, int mode, char* dirName);
+void ChangeModeAll(DirectoryNode* dirNode, int mode);
 
 //stack
 int IsEmpty(Stack* dirStack);
@@ -96,6 +98,7 @@ int cd(DirectoryTree* dirTree, char* cmd);
 int pwd(DirectoryTree* dirTree, Stack* dirStack);
 int ls(DirectoryTree* dirTree, char* cmd);
 int cat(DirectoryTree* dirTree, char* cmd);
+int chmod(DirectoryTree* dirTree, char* cmd);
 void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd);
 
 DirectoryTree* Linux;

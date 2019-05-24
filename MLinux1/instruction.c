@@ -89,6 +89,7 @@ int ls(DirectoryTree* dirTree, char* cmd)
 
     return 0;
 }
+
 int cat(DirectoryTree* dirTree, char* cmd)
 {
     char* str;
@@ -108,6 +109,45 @@ int cat(DirectoryTree* dirTree, char* cmd)
     }
     else{
         Concatenate(dirTree, cmd, 1);
+    }
+    return 0;
+}
+
+int chmod(DirectoryTree* dirTree, char* cmd)
+{
+    DirectoryNode* tmpNode = NULL;
+    char* str;
+    int tmp;
+
+    if(strcmp(cmd, "-r") == 0){
+        str = strtok(NULL, " ");
+        if(str[0]-'0'<8 && str[1]-'0'<8 && str[2]-'0'<8 && strlen(str)==3){
+            tmp = atoi(str);
+            str = strtok(NULL, " ");
+            tmpNode = IsExist(dirTree, str);
+            if(tmpNode != NULL){
+                ChangeModeAll(tmpNode, tmp);
+            }
+            else{
+                printf("No file exists.\n");
+                return -1;
+            }
+        }
+        else{
+            printf("wrong command\n");
+            return -1;
+        }
+    }
+    else{
+        if(cmd[0]-'0'<8 && cmd[1]-'0'<8 && cmd[2]-'0'<8 && strlen(cmd)==3){
+            tmp = atoi(cmd);
+            str = strtok(NULL, " ");
+            ChangeMode(dirTree, tmp, str);
+        }
+        else{
+            printf("wrong command\n");
+            return -1;
+        }
     }
     return 0;
 }
@@ -150,6 +190,13 @@ void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd)
         str = strtok(NULL, " ");
         val = cat(dirTree, str);
         if(val == 1){
+            SaveDir(dirTree, dStack);
+        }
+    }
+    else if(strcmp(str, "chmod") == 0){
+        str = strtok(NULL, " ");
+        val = chmod(dirTree, str);
+        if(val == 0){
             SaveDir(dirTree, dStack);
         }
     }

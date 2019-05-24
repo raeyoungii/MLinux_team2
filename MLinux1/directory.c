@@ -577,3 +577,33 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
     }
     return 0;
 }
+
+//chmod
+int ChangeMode(DirectoryTree* dirTree, int mode, char* dirName)
+{
+    DirectoryNode* tmpNode = NULL;
+
+    tmpNode = IsExist(dirTree, dirName);
+
+    if(tmpNode != NULL){
+        tmpNode->mode = mode;
+        Mode2Permission(tmpNode);
+    }
+    else{
+        printf("No file exist.\n");
+        return -1;
+    }
+    return 0;
+}
+void ChangeModeAll(DirectoryNode* dirNode, int mode)
+{
+    if(dirNode->RightSibling != NULL){
+        ChangeModeAll(dirNode->RightSibling, mode);
+    }
+    if(dirNode->LeftChild != NULL){
+        ChangeModeAll(dirNode->LeftChild, mode);
+    }
+    dirNode->mode = mode;
+    Mode2Permission(dirNode);
+
+}
