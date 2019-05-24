@@ -36,7 +36,7 @@ void PrintPermission(DirectoryNode* dirNode)
                 printf("-");
         }
     }
-    printf(",");
+
 }
 
 void DestroyNode(DirectoryNode* dirNode)
@@ -241,8 +241,8 @@ DirectoryTree* InitializeTree()
 
     return dirTree;
 }
-
-int MakeDir(DirectoryTree* dirTree, char* dirName)
+//type==0: folder, type==1: file
+int MakeDir(DirectoryTree* dirTree, char* dirName, int type)
 {
     //variables
     DirectoryNode* NewNode = (DirectoryNode*)malloc(sizeof(DirectoryNode));
@@ -258,13 +258,21 @@ int MakeDir(DirectoryTree* dirTree, char* dirName)
 
     //set NewNode
     strncpy(NewNode->name, dirName, MAX_NAME);
-    //rwxr-xr-x
-    NewNode->type ='d';
-    NewNode->mode = 755;
+    if(type == 0){
+        NewNode->type = 'd';
+        //rwxr-xr-x
+        NewNode->mode = 755;
+        NewNode->SIZE = 4096;
+        }
+    else{
+        NewNode->type = 'f';
+        //rw-r--r--
+        NewNode->mode = 644;
+        NewNode->SIZE = 0;
+    }
     Mode2Permission(NewNode);
     strncpy(NewNode->UID, "root", MAX_NAME);
     strncpy(NewNode->GID, "root", MAX_NAME);
-    NewNode->SIZE = 4096;
     NewNode->month = today->tm_mon + 1;
     NewNode->day = today->tm_mday;
     NewNode->hour = today->tm_hour;
@@ -415,6 +423,8 @@ void PrintPath(DirectoryTree* dirTree, Stack* dirStack)
         }
     }
     printf("\n");
+
+    free(tmpNode);
 }
 
 
@@ -495,3 +505,75 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
     return 0;
 }
 
+
+//cat
+int Concatenate(DirectoryTree* dirTree, char* fName, int o)
+{
+    DirectoryNode* tmpNode = NULL;
+    FILE* fp;
+    char buf[MAX_BUFFER];
+    int tmp = 0;
+    int cnt = 1;
+    //file read
+    if(o != 0){
+        fp = fopen(fName, "r");
+        tmpNode = IsExist(dirTree,fName);
+
+        if(tmpNode == NULL){
+            return -1;
+        }
+        while(feof(fp) == 0){
+            fgets(buf, sizeof(buf), fp);
+            if(feof(fp) != 0){
+                break;
+            }
+            //w/ line number
+            if(o == 2){
+                if(buf[strlen(buf)-1] == '\n'){
+                    printf("%d ",cnt);
+                    cnt++;
+                }
+            }
+            fputs(buf, stdout);
+        }
+
+        fclose(fp);
+    }
+    //file write
+    else{
+        fp = fopen(fName, "w");
+
+        while(strncmp(buf,"EOF",3) != 0){
+            fgets(buf, sizeof(buf), stdin);
+            if(strncmp(buf,"EOF",3) == 0){
+                break;
+            }
+            fputs(buf, fp);
+            //get file size
+            tmp += strlen(buf)-1;
+        }
+
+        fclose(fp);
+
+        tmpNode = IsExist(dirTree, fName);
+        //if exist
+        if(tmpNode != NULL){
+            time(&ltime);
+            today = localtime(&ltime);
+
+            tmpNode->month = today->tm_mon + 1;
+            tmpNode->day = today->tm_mday;
+            tmpNode->hour = today->tm_hour;
+            tmpNode->minute = today->tm_min;
+        }
+        //if file doesn't exist
+        else{
+            MakeDir(dirTree, fName, 1);
+        }
+        //write size
+        MovePath(dirTree, fName);
+        dirTree->current->SIZE = tmp;
+        Movecurrent(dirTree, "..");
+    }
+    return 0;
+}

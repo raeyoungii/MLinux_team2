@@ -8,7 +8,7 @@ int mkdir(DirectoryTree* dirTree, char* cmd)
     //if -p:
     //if cmd == aaa bbb : make two folders
     //if exist: return -1;
-    MakeDir(dirTree, cmd);
+    MakeDir(dirTree, cmd, 0);
     return 0;
 }
 int rm(DirectoryTree* dirTree, char* cmd)
@@ -89,10 +89,33 @@ int ls(DirectoryTree* dirTree, char* cmd)
 
     return 0;
 }
+int cat(DirectoryTree* dirTree, char* cmd)
+{
+    char* str;
+    /**
+        cat0: write, EOF to save
+        cat1: read
+        cat2: read w/ line number
+    **/
+    if(strcmp(cmd, ">") == 0){
+        str = strtok(NULL, " ");
+        Concatenate(dirTree, str, 0);
+        return 1;
+    }
+    else if(strcmp(cmd, "-n")== 0){
+        str = strtok(NULL, " ");
+        Concatenate(dirTree, str, 2);
+    }
+    else{
+        Concatenate(dirTree, cmd, 1);
+    }
+    return 0;
+}
 
 void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd)
 {
     char* str;
+    int val;
     if(strcmp(cmd, "") == 0){
         return;
     }
@@ -100,23 +123,35 @@ void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd)
 
     if(strcmp(str, "mkdir") == 0){
         str = strtok(NULL, " ");
-        mkdir(dirTree, str);
-        SaveDir(dirTree, dStack);
+        val = mkdir(dirTree, str);
+        if(val == 0){
+            SaveDir(dirTree, dStack);
+        }
     }
     else if(strcmp(str, "rm") == 0){
         str = strtok(NULL, " ");
-        rm(dirTree, str);
+        val = rm(dirTree, str);
+        if(val == 0){
+            SaveDir(dirTree, dStack);
+        }
     }
     else if(strcmp(str, "cd") == 0){
         str = strtok(NULL, " ");
         cd(dirTree, str);
     }
+    else if(strcmp(str, "pwd") == 0){
+        pwd(dirTree, dStack);
+    }
     else if(strcmp(str, "ls") == 0){
         str = strtok(NULL, " ");
         ls(dirTree, str);
     }
-    else if(strcmp(str, "pwd") == 0){
-        pwd(dirTree, dStack);
+    else if(strcmp(str, "cat") == 0){
+        str = strtok(NULL, " ");
+        val = cat(dirTree, str);
+        if(val == 1){
+            SaveDir(dirTree, dStack);
+        }
     }
     else{
         printf("wrong command\n");

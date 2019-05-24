@@ -4,9 +4,9 @@
 
 int main()
 {
-    char cmd[50];
     Linux = LoadDir();
     dStack = InitializeStack();
+    char cmd[50];
 
     while(1){
         printf("[root@localhost %s] $ ",Linux->current->name);

@@ -3,9 +3,11 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+#define MAX_BUFFER 512
 #define MAX_LENGTH 200
 #define MAX_DIR 50
 #define MAX_NAME 20
+
 
 
 //Directory
@@ -63,7 +65,7 @@ DirectoryTree* LoadDir();
 
 //mkdir
 DirectoryTree* InitializeTree();
-int MakeDir(DirectoryTree* dirTree, char* dirName);
+int MakeDir(DirectoryTree* dirTree, char* dirName, int type);
 //rm
 int RemoveDir(DirectoryTree* dirTree, char* dirName);
 //cd
@@ -73,6 +75,8 @@ int MovePath(DirectoryTree* dirTree, char* dirPath);
 void PrintPath(DirectoryTree* dirTree, Stack* dirStack);
 //ls
 int ListDir(DirectoryTree* dirTree, int a, int l);
+//cat
+int Concatenate(DirectoryTree* dirTree, char* fName, int o);
 
 
 //stack
@@ -91,6 +95,7 @@ int rm(DirectoryTree* dirTree, char* cmd);
 int cd(DirectoryTree* dirTree, char* cmd);
 int pwd(DirectoryTree* dirTree, Stack* dirStack);
 int ls(DirectoryTree* dirTree, char* cmd);
+int cat(DirectoryTree* dirTree, char* cmd);
 void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd);
 
 DirectoryTree* Linux;
