@@ -37,8 +37,8 @@ typedef struct tagDirectoryNode{
     int mode;
     int permission[9];
     int SIZE;
-    char UID[MAX_NAME];
-	char GID[MAX_NAME];
+    int UID;
+	int GID;
 	int month;
     int day;
     int hour;
@@ -77,9 +77,10 @@ int Mode2Permission(DirectoryNode* dirNode);
 void PrintPermission(DirectoryNode* dirNode);
 void DestroyNode(DirectoryNode* dirNode);
 void DestroyDir(DirectoryNode* dirNode);
-DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName);
+DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName, char type);
 
 //save & load
+void getPath(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack);
 void WriteNode(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack);
 void SaveDir(DirectoryTree* dirTree, Stack* dirStack);
 int ReadNode(DirectoryTree* dirTree, char* tmp);
@@ -121,7 +122,7 @@ int pwd(DirectoryTree* dirTree, Stack* dirStack);
 int ls(DirectoryTree* dirTree, char* cmd);
 int cat(DirectoryTree* dirTree, char* cmd);
 int chmod(DirectoryTree* dirTree, char* cmd);
-void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd);
+void Instruction(DirectoryTree* dirTree, char* cmd);
 
 //user
 UserList* InitializeUser();
@@ -130,6 +131,7 @@ void WriteUser(UserList* userList, UserNode* userNode);
 void SaveUserList(UserList* userList);
 int ReadUser(UserList* userList, char* tmp);
 UserList* LoadUserList();
+char* GetID(UserList* userList, int ID);
 
 
 DirectoryTree* Linux;

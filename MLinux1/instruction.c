@@ -4,21 +4,166 @@
 //command
 int mkdir(DirectoryTree* dirTree, char* cmd)
 {
-    //if -m: permission
-    //if -p:
+    DirectoryNode* tmpNode = NULL;
+    char* str;
+    char tmp[MAX_NAME];
+    int val;
+
+    if(cmd == NULL){
+        printf("wrong command\n");
+        return -1;
+    }
+
     //if cmd == aaa bbb : make two folders
     //if exist: return -1;
-    MakeDir(dirTree, cmd, 0);
+
+    tmpNode = dirTree->current;
+    if(strcmp(cmd, "-p") == 0){
+        str = strtok(NULL, " ");
+        if(str == NULL){
+            printf("wrong command\n");
+            return -1;
+        }
+        if(strncmp(str, "/", 1) == 0){
+            dirTree->current = dirTree->root;
+        }
+        str = strtok(str, "/");
+        printf("%s\n", str);
+        while(str != NULL){
+            val = Movecurrent(dirTree, str);
+            if(val != 0){
+                MakeDir(dirTree, str, 0);
+                Movecurrent(dirTree, str);
+            }
+            str = strtok(NULL, "/");
+            printf("%s", str);
+        }
+    }
+    else{
+        str = strtok(NULL, " ");
+        if(str == NULL){
+            if(strncmp(cmd, "/",1) == 0)
+                dirTree->current = dirTree->root;
+
+            if(strstr(cmd, "/") == NULL){
+                MakeDir(dirTree, cmd, 0);
+                return 0;
+            }
+            str = strtok(cmd, "/");
+            while(str != NULL){
+                val = Movecurrent(dirTree, str);
+                if(val != 0){
+                    strncpy(tmp, str, MAX_NAME);
+                    str = strtok(NULL, "/");
+                    if(str == NULL){
+                        MakeDir(dirTree, tmp, 0);
+                        dirTree->current = tmpNode;
+                        return 0;
+                    }
+                    else{
+                        printf("no Path.\n");
+                        return -1;
+                    }
+                }
+                str = strtok(NULL, "/");
+            }
+        }
+        else{
+            //fork;
+        }
+    }
     return 0;
 }
 int rm(DirectoryTree* dirTree, char* cmd)
 {
-    RemoveDir(dirTree, cmd);
+    DirectoryNode* tmpNode = NULL;
+    DirectoryNode* tmpNode2 = NULL;
+    char* str;
+    if(cmd == NULL){
+        printf("wrong command\n");
+        return -1;
+    }
+
+    if(strcmp(cmd, "-r") == 0){
+        str = strtok(NULL, " ");
+
+        tmpNode = IsExist(dirTree, str, 'd');
+
+        if(tmpNode == NULL){
+            printf("path doesn't exist.\n");
+            return -1;
+        }
+        else{
+            RemoveDir(dirTree, str);
+        }
+    }
+    //need fix
+    else if(strcmp(cmd, "-f") == 0){
+        str = strtok(NULL, " ");
+
+        tmpNode = IsExist(dirTree, str, 'f');
+        tmpNode2 = IsExist(dirTree, str, 'd');
+
+        if(tmpNode2 != NULL){
+            printf("%s is a directory\n", str);
+            return -1;
+        }
+        if(tmpNode == NULL){
+            printf(" file doesn't exist.\n");
+            return -1;
+        }
+        else{
+            RemoveDir(dirTree, str);
+        }
+    }
+    else if(strcmp(cmd, "-rf") == 0){
+        str = strtok(NULL, " ");
+
+        tmpNode = IsExist(dirTree, str, 'd');
+
+        if(tmpNode == NULL){
+            printf("path doesn't exist.\n");
+            return -1;
+        }
+        else{
+            RemoveDir(dirTree, str);
+        }
+    }
+    else{
+        tmpNode = IsExist(dirTree, cmd, 'd');
+        tmpNode2 = IsExist(dirTree, cmd, 'f');
+
+        if(tmpNode2 != NULL){
+            RemoveDir(dirTree, cmd);
+            return 0;
+        }
+        else if(tmpNode == NULL){
+            printf("path doesn't exist.\n");
+            return -1;
+        }
+        else if(tmpNode->LeftChild != NULL){
+               printf("Directory is not empty\n");
+               return -1;
+        }
+
+        else{
+            RemoveDir(dirTree, cmd);
+            return 0;
+        }
+    }
+
     return 0;
 }
 int cd(DirectoryTree* dirTree, char* cmd)
 {
-    MovePath(dirTree, cmd);
+    char tmp[MAX_DIR];
+    if(cmd == NULL){
+        strcpy(tmp, usrList->current->dir);
+        MovePath(dirTree, tmp);
+    }
+    else{
+        MovePath(dirTree, cmd);
+    }
     return 0;
 }
 
@@ -92,29 +237,81 @@ int ls(DirectoryTree* dirTree, char* cmd)
 
 int cat(DirectoryTree* dirTree, char* cmd)
 {
+    DirectoryNode* tmpNode = NULL;
+    DirectoryNode* tmpNode2 = NULL;
     char* str;
     /**
         cat0: write, EOF to save
         cat1: read
         cat2: read w/ line number
     **/
+
+    if(cmd == NULL){
+        printf("wrong command\n");
+        return -1;
+    }
+
     if(strcmp(cmd, ">") == 0){
         str = strtok(NULL, " ");
+        tmpNode = IsExist(dirTree, str, 'd');
+        if(tmpNode != NULL){
+            printf("%s is a directory.\n", str);
+            return -1;
+        }
+        else{
         Concatenate(dirTree, str, 0);
-        return 1;
+        }
+        return 0;
     }
     else if(strcmp(cmd, "-n")== 0){
         str = strtok(NULL, " ");
+        tmpNode = IsExist(dirTree, str, 'd');
+        tmpNode2 = IsExist(dirTree, str, 'f');
+
+        if(tmpNode == NULL && tmpNode2 == NULL){
+            printf("no directory of file.\n");
+            return -1;
+        }
+        else if(tmpNode != NULL && tmpNode2 == NULL){
+            printf("%s is a directory.\n", str);
+            return -1;
+        }
+        else{
         Concatenate(dirTree, str, 2);
+        }
     }
     else if(strcmp(cmd, "-b")== 0){
         str = strtok(NULL, " ");
+        tmpNode = IsExist(dirTree, str, 'd');
+        tmpNode2 = IsExist(dirTree, str, 'f');
+        if(tmpNode == NULL && tmpNode2 == NULL){
+            printf("no directory of file.\n");
+            return -1;
+        }
+        else if(tmpNode != NULL && tmpNode2 == NULL){
+            printf("%s is a directory.\n", str);
+            return -1;
+        }
+        else{
         Concatenate(dirTree, str, 3);
+        }
     }
     else{
+        tmpNode = IsExist(dirTree, cmd, 'd');
+        tmpNode2 = IsExist(dirTree, cmd, 'f');
+        if(tmpNode == NULL && tmpNode2 == NULL){
+            printf("no directory of file.\n");
+            return -1;
+        }
+        else if(tmpNode != NULL && tmpNode2 == NULL){
+            printf("%s is a directory.\n", cmd);
+            return -1;
+        }
+        else{
         Concatenate(dirTree, cmd, 1);
+        }
     }
-    return 0;
+    return 1;
 }
 
 int chmod(DirectoryTree* dirTree, char* cmd)
@@ -128,7 +325,7 @@ int chmod(DirectoryTree* dirTree, char* cmd)
         if(str[0]-'0'<8 && str[1]-'0'<8 && str[2]-'0'<8 && strlen(str)==3){
             tmp = atoi(str);
             str = strtok(NULL, " ");
-            tmpNode = IsExist(dirTree, str);
+            tmpNode = IsExist(dirTree, str, 'd');
             if(tmpNode != NULL){
                 ChangeModeAll(tmpNode, tmp);
             }
@@ -156,7 +353,7 @@ int chmod(DirectoryTree* dirTree, char* cmd)
     return 0;
 }
 
-void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd)
+void Instruction(DirectoryTree* dirTree, char* cmd)
 {
     char* str;
     int val;
@@ -193,7 +390,7 @@ void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd)
     else if(strcmp(str, "cat") == 0){
         str = strtok(NULL, " ");
         val = cat(dirTree, str);
-        if(val == 1){
+        if(val == 0){
             SaveDir(dirTree, dStack);
         }
     }

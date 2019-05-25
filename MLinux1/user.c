@@ -97,7 +97,7 @@ int ReadUser(UserList* userList, char* tmp)
     str = strtok(tmp, " ");
     strncpy(NewNode->name, str, MAX_NAME);
     str = strtok(NULL, " ");
-    strncpy(NewNode->dir, str, MAX_NAME);
+    strncpy(NewNode->dir, str, MAX_DIR);
     str = strtok(NULL, " ");
     NewNode->UID = atoi(str);
     str = strtok(NULL, " ");
@@ -146,7 +146,19 @@ UserList* LoadUserList()
 
     fclose(User);
 
-    //MovePath(dirTree, returnList->head->dir);
-
     return userList;
+}
+
+
+char* GetID(UserList* userList, int ID)
+{
+    UserNode* tmpNode = NULL;
+
+    tmpNode = userList->head;
+    while(tmpNode != NULL){
+        if(tmpNode->UID == ID)
+            break;
+        tmpNode = tmpNode->LinkNode;
+    }
+    return tmpNode->name;
 }

@@ -9,6 +9,9 @@ int Mode2Permission(DirectoryNode* dirNode)
     int tmp;
     int j;
 
+    for(int i=0;i<9;i++)
+        dirNode->permission[i] = 0;
+
     sprintf(buf, "%d", dirNode->mode);
 
     for(int i=0;i<3;i++){
@@ -60,7 +63,7 @@ void DestroyDir(DirectoryNode* dirNode)
     DestroyNode(dirNode);
 }
 
-DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName)
+DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName, char type)
 {
     //variables
     DirectoryNode* returnNode = NULL;
@@ -68,7 +71,7 @@ DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName)
     returnNode = dirTree->current->LeftChild;
 
     while(returnNode != NULL){
-        if(strcmp(returnNode->name, dirName) == 0)
+        if(strcmp(returnNode->name, dirName) == 0 && returnNode->type == type)
             break;
         returnNode = returnNode->RightSibling;
     }
@@ -105,10 +108,11 @@ void getPath(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack)
     fprintf(Dir, " %s\n", tmp);
 }
 
+
 void WriteNode(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack)
 {
     fprintf(Dir, "%s %c %d ", dirNode->name, dirNode->type, dirNode->mode);
-    fprintf(Dir, "%d %s %s %d %d %d %d", dirNode->SIZE, dirNode->UID, dirNode->GID, dirNode->month, dirNode->day, dirNode->hour, dirNode->minute);
+    fprintf(Dir, "%d %d %d %d %d %d %d", dirNode->SIZE, dirNode->UID, dirNode->GID, dirNode->month, dirNode->day, dirNode->hour, dirNode->minute);
 
     if(dirNode == dirTree->root)
         fprintf(Dir, "\n");
@@ -153,9 +157,9 @@ int ReadNode(DirectoryTree* dirTree, char* tmp)
     str = strtok(NULL, " ");
     NewNode->SIZE = atoi(str);
     str = strtok(NULL, " ");
-    strncpy(NewNode->UID, str, MAX_NAME);
+    NewNode->UID = atoi(str);
     str = strtok(NULL, " ");
-    strncpy(NewNode->GID, str, MAX_NAME);
+    NewNode->GID = atoi(str);
     str = strtok(NULL, " ");
     NewNode->month = atoi(str);
     str = strtok(NULL, " ");
@@ -225,8 +229,8 @@ DirectoryTree* InitializeTree()
     NewNode->type ='d';
     NewNode->mode = 755;
     Mode2Permission(NewNode);
-    strncpy(NewNode->UID, "root", MAX_NAME);
-    strncpy(NewNode->GID, "root", MAX_NAME);
+    NewNode->UID = usrList->head->UID;
+    NewNode->GID = usrList->head->GID;
     NewNode->SIZE = 4096;
     NewNode->month = today->tm_mon+1;
     NewNode->day = today->tm_mday;
@@ -249,6 +253,15 @@ int MakeDir(DirectoryTree* dirTree, char* dirName, int type)
     DirectoryNode* NewNode = (DirectoryNode*)malloc(sizeof(DirectoryNode));
     DirectoryNode* tmpNode = NULL;
 
+    if(strcmp(dirName, ".") == 0 || strcmp(dirName, "..") == 0){
+        printf("can't make directory\n");
+        return -1;
+    }
+    tmpNode = IsExist(dirTree, dirName, type);
+    if(tmpNode != NULL && tmpNode->type == 'd'){
+        printf("mkdir: '%s' 디렉토리를 만들 수 없습니다 : 파일이 존재 합니다. \n", dirName);
+        return -1;
+    }
     //get time
     time(&ltime);
     today = localtime(&ltime);
@@ -272,8 +285,8 @@ int MakeDir(DirectoryTree* dirTree, char* dirName, int type)
         NewNode->SIZE = 0;
     }
     Mode2Permission(NewNode);
-    strncpy(NewNode->UID, "root", MAX_NAME);
-    strncpy(NewNode->GID, "root", MAX_NAME);
+    NewNode->UID = usrList->current->UID;
+    NewNode->GID = usrList->current->GID;
     NewNode->month = today->tm_mon + 1;
     NewNode->day = today->tm_mday;
     NewNode->hour = today->tm_hour;
@@ -354,8 +367,8 @@ int Movecurrent(DirectoryTree* dirTree, char* dirPath)
     }
     else{
         //if input path exist
-        if( IsExist(dirTree, dirPath) != NULL){
-            dirTree->current = IsExist(dirTree, dirPath);
+        if( IsExist(dirTree, dirPath, 'd') != NULL){
+            dirTree->current = IsExist(dirTree, dirPath, 'd');
         }
         else
             return -1;
@@ -380,6 +393,10 @@ int MovePath(DirectoryTree* dirTree, char* dirPath)
     else{
         //if input is absolute path
         if(strncmp(dirPath, "/",1) == 0){
+            if(strtok(dirPath, "/") == NULL){
+                printf("denied, directory doesn't exist.\n");
+                return -1;
+            }
             dirTree->current = dirTree->root;
         }
         //if input is relative path
@@ -437,18 +454,20 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
 
     tmpNode = dirTree->current->LeftChild;
 
-    if(tmpNode == NULL){
-        printf("no files.\n");
-        return -1;
-    }
+
 
     if(l == 0){
+        if(a == 0){
+            if(tmpNode == NULL){
+                printf("no files.\n");
+                return -1;
+            }
+        }
         if(a == 1){
             printf(".\t");
             if(dirTree->current != dirTree->root)
                 printf("..\t");
         }
-
         while(tmpNode != NULL){
             if(a == 0){
                 if(strncmp(tmpNode->name,".",1) == 0){
@@ -462,11 +481,17 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
         printf("\n");
     }
     else{
+        if(a == 0){
+            if(tmpNode == NULL){
+                printf("no files.\n");
+                return -1;
+            }
+        }
         if(a == 1){
             printf("%c", dirTree->current->type);
             PrintPermission(dirTree->current);
             printf("  ");
-            printf("%-5s%-5s", dirTree->current->UID, dirTree->current->GID);
+            printf("%-5s%-5s", GetID(usrList, dirTree->current->UID), GetID(usrList, dirTree->current->GID));
             printf("%5d ", dirTree->current->SIZE);
             GetMonth(dirTree->current->month);
             printf(" %d %02d:%02d ", dirTree->current->day, dirTree->current->hour, dirTree->current->minute);
@@ -476,7 +501,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
                 printf("%c", dirTree->current->Parent->type);
                 PrintPermission(dirTree->current->Parent);
                 printf("  ");
-                printf("%-5s%-5s", dirTree->current->Parent->UID, dirTree->current->Parent->GID);
+                printf("%-5s%-5s", GetID(usrList, dirTree->current->Parent->UID), GetID(usrList, dirTree->current->Parent->GID));
                 printf("%5d ", dirTree->current->SIZE);
                 GetMonth(dirTree->current->month);
                 printf(" %d %02d:%02d ", dirTree->current->Parent->day, dirTree->current->Parent->hour, dirTree->current->Parent->minute);
@@ -494,7 +519,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             printf("%c", tmpNode->type);
             PrintPermission(tmpNode);
             printf("  ");
-            printf("%-5s%-5s", tmpNode->UID, tmpNode->GID);
+            printf("%-5s%-5s", GetID(usrList, tmpNode->UID), GetID(usrList, tmpNode->GID));
             printf("%5d ", tmpNode->SIZE);
             GetMonth(tmpNode->month);
             printf(" %d %02d:%02d ", tmpNode->day, tmpNode->hour, tmpNode->minute);
@@ -515,9 +540,10 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
     char buf[MAX_BUFFER];
     int tmp = 0;
     int cnt = 1;
+
     //file read
     if(o != 0){
-        tmpNode = IsExist(dirTree,fName);
+        tmpNode = IsExist(dirTree,fName, 'f');
 
         if(tmpNode == NULL){
             return -1;
@@ -532,13 +558,13 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
             //w/ line number
             if(o == 2){
                 if(buf[strlen(buf)-1] == '\n'){
-                    printf("     %d ",cnt);
+                    printf("    %d ",cnt);
                     cnt++;
                 }
             }
             else if(o == 3){
                 if(buf[strlen(buf)-1] == '\n' && buf[0] != '\n'){
-                    printf("     %d ",cnt);
+                    printf("    %d ",cnt);
                     cnt++;
                 }
             }
@@ -563,7 +589,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
 
         fclose(fp);
 
-        tmpNode = IsExist(dirTree, fName);
+        tmpNode = IsExist(dirTree, fName, 'f');
         //if exist
         if(tmpNode != NULL){
             time(&ltime);
@@ -579,9 +605,8 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
             MakeDir(dirTree, fName, 1);
         }
         //write size
-        MovePath(dirTree, fName);
-        dirTree->current->SIZE = tmp;
-        MovePath(dirTree, "..");
+        tmpNode = IsExist(dirTree, fName, 'f');
+        tmpNode->SIZE = tmp;
     }
     return 0;
 }
@@ -592,7 +617,7 @@ int ChangeMode(DirectoryTree* dirTree, int mode, char* dirName)
 {
     DirectoryNode* tmpNode = NULL;
 
-    tmpNode = IsExist(dirTree, dirName);
+    tmpNode = IsExist(dirTree, dirName, 'd');
 
     if(tmpNode != NULL){
         tmpNode->mode = mode;
