@@ -40,7 +40,7 @@ int ls(DirectoryTree* dirTree, char* cmd)
     }
 
     if(cmd[0] == '-'){
-        if(strcmp(cmd, "-al") == 0){
+        if(strcmp(cmd, "-al") == 0 || strcmp(cmd, "-la") == 0){
             str = strtok(NULL, " ");
             if(str != NULL){
                 tmpNode = dirTree->current;

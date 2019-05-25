@@ -580,7 +580,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
         //write size
         MovePath(dirTree, fName);
         dirTree->current->SIZE = tmp;
-        Movecurrent(dirTree, "..");
+        MovePath(dirTree, "..");
     }
     return 0;
 }
@@ -616,3 +616,5 @@ void ChangeModeAll(DirectoryNode* dirNode, int mode)
     Mode2Permission(dirNode);
 
 }
+
+
