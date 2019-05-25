@@ -5,11 +5,12 @@
 int main()
 {
     Linux = LoadDir();
+    usrList = LoadUserList();
     dStack = InitializeStack();
     char cmd[50];
 
     while(1){
-        printf("[root@localhost %s] $ ",Linux->current->name);
+        printf("[%s@localhost %s] $ ",usrList->current->name, Linux->current->name);
         gets(cmd);
         if(strcmp(cmd, "exit") == 0){
             break;

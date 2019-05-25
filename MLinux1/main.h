@@ -8,6 +8,26 @@
 #define MAX_DIR 50
 #define MAX_NAME 20
 
+//User
+typedef struct tagUserNode{
+    char name[MAX_NAME];
+    char dir[MAX_DIR];
+    int UID;
+    int GID;
+    int month;
+    int day;
+    int hour;
+    int minute;
+    struct tagUserNode* LinkNode;
+}UserNode;
+
+typedef struct tagUser{
+    int topUID;
+    int topGID;
+    UserNode* head;
+    UserNode* tail;
+    UserNode* current;
+}UserList;
 
 
 //Directory
@@ -39,11 +59,13 @@ typedef struct tagStackNode{
 	char name[MAX_NAME];
 	struct tagStackNode* LinkNode;
 }StackNode;
+//change to tagPathNode, PathNode;
 
 typedef struct tagStack{
 	StackNode* TopNode;
+	int cnt;
 }Stack;
-
+//change to tagPathStack, PathStack;
 
 //time
 time_t ltime;
@@ -72,7 +94,7 @@ int RemoveDir(DirectoryTree* dirTree, char* dirName);
 int Movecurrent(DirectoryTree* dirTree, char* dirPath);
 int MovePath(DirectoryTree* dirTree, char* dirPath);
 //pwd
-void PrintPath(DirectoryTree* dirTree, Stack* dirStack);
+int PrintPath(DirectoryTree* dirTree, Stack* dirStack);
 //ls
 int ListDir(DirectoryTree* dirTree, int a, int l);
 //cat
@@ -101,7 +123,18 @@ int cat(DirectoryTree* dirTree, char* cmd);
 int chmod(DirectoryTree* dirTree, char* cmd);
 void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd);
 
+//user
+UserList* InitializeUser();
+int AddUser(UserList* userList, char* userName);
+void WriteUser(UserList* userList, UserNode* userNode);
+void SaveUserList(UserList* userList);
+int ReadUser(UserList* userList, char* tmp);
+UserList* LoadUserList();
+
+
 DirectoryTree* Linux;
 Stack* dStack;
+UserList* usrList;
 FILE* Dir;
+FILE* User;
 #endif // MAIN_H_

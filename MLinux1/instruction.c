@@ -160,7 +160,7 @@ void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd)
 {
     char* str;
     int val;
-    if(strcmp(cmd, "") == 0){
+    if(strcmp(cmd, "") == 0 || cmd[0] == ' '){
         return;
     }
     str = strtok(cmd, " ");
@@ -207,4 +207,5 @@ void Instruction(DirectoryTree* dirTree, Stack* dirStack, char* cmd)
     else{
         printf("wrong command\n");
     }
+    return;
 }

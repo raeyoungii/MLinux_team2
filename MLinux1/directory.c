@@ -101,7 +101,7 @@ void getPath(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack)
                 strcat(tmp ,Pop(dirStack));
         }
     }
-
+    //return path;
     fprintf(Dir, " %s\n", tmp);
 }
 
@@ -264,7 +264,7 @@ int MakeDir(DirectoryTree* dirTree, char* dirName, int type)
         //rwxr-xr-x
         NewNode->mode = 755;
         NewNode->SIZE = 4096;
-        }
+    }
     else{
         NewNode->type = 'f';
         //rw-r--r--
@@ -400,7 +400,7 @@ int MovePath(DirectoryTree* dirTree, char* dirPath)
 
 
 //pwd
-void PrintPath(DirectoryTree* dirTree, Stack* dirStack)
+int PrintPath(DirectoryTree* dirTree, Stack* dirStack)
 {
     //variables
     DirectoryNode* tmpNode = NULL;
@@ -425,7 +425,7 @@ void PrintPath(DirectoryTree* dirTree, Stack* dirStack)
     }
     printf("\n");
 
-    free(tmpNode);
+    return 0;
 }
 
 
@@ -517,12 +517,13 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
     int cnt = 1;
     //file read
     if(o != 0){
-        fp = fopen(fName, "r");
         tmpNode = IsExist(dirTree,fName);
 
         if(tmpNode == NULL){
             return -1;
         }
+        fp = fopen(fName, "r");
+
         while(feof(fp) == 0){
             fgets(buf, sizeof(buf), fp);
             if(feof(fp) != 0){
@@ -531,13 +532,13 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
             //w/ line number
             if(o == 2){
                 if(buf[strlen(buf)-1] == '\n'){
-                    printf("%d ",cnt);
+                    printf("     %d ",cnt);
                     cnt++;
                 }
             }
             else if(o == 3){
                 if(buf[strlen(buf)-1] == '\n' && buf[0] != '\n'){
-                    printf("%d ",cnt);
+                    printf("     %d ",cnt);
                     cnt++;
                 }
             }
@@ -614,7 +615,6 @@ void ChangeModeAll(DirectoryNode* dirNode, int mode)
     }
     dirNode->mode = mode;
     Mode2Permission(dirNode);
-
 }
 
 

@@ -1,12 +1,14 @@
 / d 755 4096 root root 5 24 6 46
-aa d 755 4096 root root 5 24 6 46 /
-bb d 755 4096 root root 5 24 6 46 /
-cc d 755 4096 root root 5 24 8 3 /
-yes d 755 4096 root root 5 24 6 46 /bb
-no d 755 4096 root root 5 24 6 46 /bb/yes
-test1 d 755 4096 root root 5 24 6 46 /aa
-test2 d 755 4096 root root 5 24 6 46 /aa
-hello.txt f 644 12 root root 5 25 5 20 /aa
-dd d 755 4096 root root 5 25 2 17 /aa
-.abc d 755 4096 root root 5 25 4 44 /aa
-ccc d 755 4096 root root 5 24 6 46 /aa/test2
+home d 755 4096 root root 5 24 6 46 /
+os d 755 4096 os os 5 24 6 46 /home
+aa d 755 4096 os os 5 24 6 46 /home/os
+bb d 755 4096 os os 5 24 6 46 /home/os
+cc d 755 4096 os os 5 24 8 3 /home/os
+yes d 755 4096 os os 5 24 6 46 /home/os/bb
+no d 755 4096 os os 5 24 6 46 /home/os/bb/yes
+test1 d 755 4096 os os 5 24 6 46 /home/os/aa
+test2 d 755 4096 os os 5 24 6 46 /home/os/aa
+hello.txt f 644 12 os os 5 25 5 20 /home/os/aa
+dd d 755 4096 os os 5 25 2 17 /home/os/aa
+.abc d 755 4096 os os 5 25 4 44 /home/os/aa
+ccc d 755 4096 os os 5 24 6 46 /home/os/aa/test2
