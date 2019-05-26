@@ -59,13 +59,13 @@ typedef struct tagStackNode{
 	char name[MAX_NAME];
 	struct tagStackNode* LinkNode;
 }StackNode;
-//change to tagPathNode, PathNode;
+
 
 typedef struct tagStack{
 	StackNode* TopNode;
 	int cnt;
 }Stack;
-//change to tagPathStack, PathStack;
+
 
 //time
 time_t ltime;

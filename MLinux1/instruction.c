@@ -79,6 +79,8 @@ int rm(DirectoryTree* dirTree, char* cmd)
     DirectoryNode* tmpNode = NULL;
     DirectoryNode* tmpNode2 = NULL;
     char* str;
+    char yn[MAX_LENGTH];
+
     if(cmd == NULL){
         printf("wrong command\n");
         return -1;
@@ -94,7 +96,20 @@ int rm(DirectoryTree* dirTree, char* cmd)
             return -1;
         }
         else{
-            RemoveDir(dirTree, str);
+            printf("do you want to remove this file? [y/n] ");
+            while(1){
+            scanf("%s", yn);
+
+                if(strcmp(yn, "y") == 0){
+                    RemoveDir(dirTree, str);
+                    return 0;
+                }
+                else if(strcmp(yn, "n") == 0)
+                    return -1;
+                else{
+                    printf("please type [y/n] ");
+                }
+            }
         }
     }
     //need fix
@@ -130,25 +145,32 @@ int rm(DirectoryTree* dirTree, char* cmd)
         }
     }
     else{
-        tmpNode = IsExist(dirTree, cmd, 'd');
-        tmpNode2 = IsExist(dirTree, cmd, 'f');
+        tmpNode = IsExist(dirTree, cmd, 'f');
+        tmpNode2 = IsExist(dirTree, cmd, 'd');
 
         if(tmpNode2 != NULL){
-            RemoveDir(dirTree, cmd);
-            return 0;
-        }
-        else if(tmpNode == NULL){
-            printf("path doesn't exist.\n");
+            printf("%s is a directory\n", cmd);
             return -1;
         }
-        else if(tmpNode->LeftChild != NULL){
-               printf("Directory is not empty\n");
-               return -1;
+        if(tmpNode == NULL){
+            printf(" file doesn't exist.\n");
+            return -1;
         }
-
         else{
-            RemoveDir(dirTree, cmd);
-            return 0;
+            printf("do you want to remove this file? [y/n] ");
+            while(1){
+            scanf("%s", yn);
+
+                if(strcmp(yn, "y") == 0){
+                    RemoveDir(dirTree, cmd);
+                    return 0;
+                }
+                else if(strcmp(yn, "n") == 0)
+                    return -1;
+                else{
+                    printf("please type [y/n] ");
+                }
+            }
         }
     }
 
