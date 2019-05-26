@@ -63,7 +63,7 @@ void DestroyDir(DirectoryNode* dirNode)
     DestroyNode(dirNode);
 }
 
-DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName, char type)
+DirectoryNode* IsExistDir(DirectoryTree* dirTree, char* dirName, char type)
 {
     //variables
     DirectoryNode* returnNode = NULL;
@@ -258,12 +258,12 @@ int MakeDir(DirectoryTree* dirTree, char* dirName, char type)
         return -1;
     }
     if(strcmp(dirName, ".") == 0 || strcmp(dirName, "..") == 0){
-        printf("can't make directory\n");
+        printf("mkdir: '%s' 디렉토리를 만들 수 없습니다\n", dirName);
         return -1;
     }
-    tmpNode = IsExist(dirTree, dirName, type);
+    tmpNode = IsExistDir(dirTree, dirName, type);
     if(tmpNode != NULL && tmpNode->type == 'd'){
-        printf("mkdir: '%s' 디렉토리를 만들 수 없습니다 : 파일이 존재 합니다. \n", dirName);
+        printf("mkdir: '%s' 디렉토리를 만들 수 없습니다 : 파일이 존재 합니다\n", dirName);
         return -1;
     }
     //get time
@@ -276,7 +276,7 @@ int MakeDir(DirectoryTree* dirTree, char* dirName, char type)
 
     //set NewNode
     strncpy(NewNode->name, dirName, MAX_NAME);
-    if(type == 0){
+    if(type == 'd'){
         NewNode->type = 'd';
         //rwxr-xr-x
         NewNode->mode = 755;
@@ -327,7 +327,7 @@ int RemoveDir(DirectoryTree* dirTree, char* dirName)
     tmpNode = dirTree->current->LeftChild;
 
     if(tmpNode == NULL){
-        printf("No directory\n");
+        printf("rm: '%s'를 지울수없음: 그런 파일이나 디렉터리가 없습니다\n", dirName);
         return -1;
     }
 
@@ -355,7 +355,7 @@ int RemoveDir(DirectoryTree* dirTree, char* dirName)
             DestroyNode(DelNode);
         }
         else{
-            printf("No directory\n");
+            printf("rm: '%s'를 지울수없음: 그런 파일이나 디렉터리가 없습니다\n", dirName);
             return -1;
         }
     }
@@ -378,7 +378,7 @@ int Movecurrent(DirectoryTree* dirTree, char* dirPath)
     else{
 
         //if input path exist
-        tmpNode = IsExist(dirTree, dirPath, 'd');
+        tmpNode = IsExistDir(dirTree, dirPath, 'd');
         if(tmpNode != NULL){
             dirTree->current = tmpNode;
         }
@@ -407,7 +407,7 @@ int MovePath(DirectoryTree* dirTree, char* dirPath)
         //if input is absolute path
         if(strncmp(dirPath, "/",1) == 0){
             if(strtok(dirPath, "/") == NULL){
-                printf("denied, directory doesn't exist.\n");
+                //printf("denied, directory doesn't exist.\n");
                 return -1;
             }
             dirTree->current = dirTree->root;
@@ -418,7 +418,7 @@ int MovePath(DirectoryTree* dirTree, char* dirPath)
             val = Movecurrent(dirTree, str);
             //if input path doesn't exist
             if(val != 0){
-                printf("denied, directory doesn't exist.\n");
+                //printf("denied, directory doesn't exist.\n");
                 dirTree->current = tmpNode;
                 return -1;
             }
@@ -464,6 +464,9 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
 {
     //variables
     DirectoryNode* tmpNode = NULL;
+    DirectoryNode* tmpNode2 = NULL;
+    char type;
+    int cnt;
 
     tmpNode = dirTree->current->LeftChild;
 
@@ -475,7 +478,6 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
     if(l == 0){
         if(a == 0){
             if(tmpNode == NULL){
-                printf("no files.\n");
                 return -1;
             }
         }
@@ -499,12 +501,15 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
     else{
         if(a == 0){
             if(tmpNode == NULL){
-                printf("no files.\n");
                 return -1;
             }
         }
         if(a == 1){
-            printf("%c", dirTree->current->type);
+            if(dirTree->current->type == 'd')
+                type = 'd';
+            else if(dirTree->current->type == 'f')
+                type = '-';
+            printf("%c", type);
             PrintPermission(dirTree->current);
             printf("  ");
             printf("%-5s%-5s", GetUID(dirTree->current), GetGID(dirTree->current));
@@ -513,8 +518,12 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             printf(" %d %02d:%02d ", dirTree->current->day, dirTree->current->hour, dirTree->current->minute);
             printf(".\n");
 
-            if(dirTree->current != dirTree->root){
-                printf("%c", dirTree->current->Parent->type);
+                if(dirTree->current != dirTree->root){
+                    if(dirTree->current->Parent->type == 'd')
+                    type = 'd';
+                else if(dirTree->current->Parent->type == 'f')
+                    type = '-';
+                printf("%c", type);
                 PrintPermission(dirTree->current->Parent);
                 printf("  ");
                 printf("%-5s%-5s", GetUID(dirTree->current->Parent), GetGID(dirTree->current->Parent));
@@ -532,9 +541,36 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
                     continue;
                 }
             }
-            printf("%c", tmpNode->type);
+            tmpNode2 = tmpNode->LeftChild;
+            if(tmpNode2 == NULL){
+                if(tmpNode->type == 'd')
+                    cnt = 2;
+                else
+                    cnt = 1;
+            }
+            else{
+                if(tmpNode2->type == 'd')
+                    cnt = 4;
+                else
+                    cnt = 3;
+
+                while(tmpNode2->RightSibling != NULL){
+                    tmpNode2 = tmpNode2->RightSibling;
+                    if(tmpNode2->type == 'd')
+                        cnt = cnt + 2;
+                    else
+                        cnt = cnt + 1;
+
+                }
+            }
+            if(tmpNode->type == 'd')
+                type = 'd';
+            else if(tmpNode->type == 'f')
+                type = '-';
+            printf("%c", type);
             PrintPermission(tmpNode);
-            printf("  ");
+            printf("%3d", cnt);
+            printf("   ");
             printf("%-5s%-5s", GetUID(tmpNode), GetGID(tmpNode));
             printf("%5d ", tmpNode->SIZE);
             GetMonth(tmpNode->month);
@@ -559,7 +595,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
 
     //file read
     if(o != 0){
-        tmpNode = IsExist(dirTree,fName, 'f');
+        tmpNode = IsExistDir(dirTree,fName, 'f');
 
         if(tmpNode == NULL){
             return -1;
@@ -605,7 +641,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
 
         fclose(fp);
 
-        tmpNode = IsExist(dirTree, fName, 'f');
+        tmpNode = IsExistDir(dirTree, fName, 'f');
         //if exist
         if(tmpNode != NULL){
             time(&ltime);
@@ -621,7 +657,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
             MakeDir(dirTree, fName, 'f');
         }
         //write size
-        tmpNode = IsExist(dirTree, fName, 'f');
+        tmpNode = IsExistDir(dirTree, fName, 'f');
         tmpNode->SIZE = tmp;
     }
     return 0;
@@ -632,15 +668,29 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
 int ChangeMode(DirectoryTree* dirTree, int mode, char* dirName)
 {
     DirectoryNode* tmpNode = NULL;
+    DirectoryNode* tmpNode2 = NULL;
 
-    tmpNode = IsExist(dirTree, dirName, 'd');
+    tmpNode = IsExistDir(dirTree, dirName, 'd');
+    tmpNode2 = IsExistDir(dirTree, dirName, 'f');
 
     if(tmpNode != NULL){
+        if(HasPermission(tmpNode, 'w') != 0){
+            printf("chmod: '%s'파일을 수정할 수 없음: 허가거부\n", dirName);
+            return -1;
+        }
         tmpNode->mode = mode;
         Mode2Permission(tmpNode);
     }
+    else if(tmpNode2 != NULL){
+        if(HasPermission(tmpNode2, 'w') != 0){
+            printf("chmod: '%s'파일을 수정할 수 없음: 허가거부\n", dirName);
+            return -1;
+        }
+        tmpNode2->mode = mode;
+        Mode2Permission(tmpNode2);
+    }
     else{
-        printf("No file exist.\n");
+        printf("chmod: '%s' 그런 파일이나 디렉터리가 없습니다\n", dirName);
         return -1;
     }
     return 0;
@@ -658,4 +708,67 @@ void ChangeModeAll(DirectoryNode* dirNode, int mode)
     Mode2Permission(dirNode);
 }
 
+int ChangeOwner(DirectoryTree* dirTree, char* userName, char* dirName)
+{
+    DirectoryNode* tmpNode = NULL;
+    DirectoryNode* tmpNode2 = NULL;
+    UserNode* tmpUser = NULL;
 
+    tmpNode = IsExistDir(dirTree, dirName, 'd');
+    tmpNode2 = IsExistDir(dirTree, dirName, 'f');
+
+
+    if(tmpNode != NULL){
+        if(HasPermission(tmpNode, 'w') != 0){
+            printf("chown: '%s'파일을 수정할 수 없음: 허가거부\n", dirName);
+            return -1;
+        }
+        tmpUser = IsExistUser(usrList, userName);
+        if(tmpUser != NULL){
+            tmpNode->UID = tmpUser->UID;
+            tmpNode->GID = tmpUser->GID;
+        }
+        else{
+            printf("chown: '%s' 유저가 존재하지 않습니다\n", userName);
+            return -1;
+        }
+    }
+    else if(tmpNode2 != NULL){
+        if(HasPermission(tmpNode, 'w') != 0){
+            printf("chown: '%s'파일을 수정할 수 없음: 허가거부\n", dirName);
+            return -1;
+        }
+        tmpUser = IsExistUser(usrList, userName);
+        if(tmpUser != NULL){
+            tmpNode->UID = tmpUser->UID;
+            tmpNode->GID = tmpUser->GID;
+        }
+        else{
+            printf("chown: '%s' 유저가 존재하지 않습니다\n", userName);
+            return -1;
+        }
+    }
+    else{
+        printf("chown: '%s': 그런 파일이나 디렉터리가 없습니다\n", dirName);
+        return -1;
+    }
+
+    return 0;
+}
+
+void ChangeOwnerAll(DirectoryNode* dirNode, char* userName)
+{
+    UserNode* tmpUser = NULL;
+
+    tmpUser = IsExistUser(usrList, userName);
+
+    if(dirNode->RightSibling != NULL){
+        ChangeOwnerAll(dirNode->RightSibling, userName);
+    }
+    if(dirNode->LeftChild != NULL){
+        ChangeOwnerAll(dirNode->LeftChild, userName);
+    }
+    dirNode->UID = tmpUser->UID;
+    dirNode->GID = tmpUser->GID;
+
+}

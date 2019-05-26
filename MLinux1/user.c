@@ -149,6 +149,20 @@ UserList* LoadUserList()
     return userList;
 }
 
+UserNode* IsExistUser(UserList* userList, char* userName)
+{
+    UserNode* returnUser = NULL;
+
+    returnUser = userList->head->LinkNode;
+
+    while(returnUser != NULL){
+        if(strcmp(returnUser->name, userName) == 0)
+            break;
+        returnUser = returnUser->LinkNode;
+    }
+
+    return returnUser;
+}
 
 char* GetUID(DirectoryNode* dirNode)
 {
@@ -243,14 +257,3 @@ int HasPermission(DirectoryNode* dirNode, char o)
     }
     return -1;
 }
-
-
-
-
-
-
-
-
-
-
-

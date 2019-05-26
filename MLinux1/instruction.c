@@ -10,7 +10,7 @@ int mkdir(DirectoryTree* dirTree, char* cmd)
     int val;
 
     if(cmd == NULL){
-        printf("wrong command\n");
+        printf("mkdir: 잘못된 연산자\n");
         return -1;
     }
 
@@ -21,14 +21,13 @@ int mkdir(DirectoryTree* dirTree, char* cmd)
     if(strcmp(cmd, "-p") == 0){
         str = strtok(NULL, " ");
         if(str == NULL){
-            printf("wrong command\n");
+            printf("mkdir: 잘못된 연산자\n");
             return -1;
         }
         if(strncmp(str, "/", 1) == 0){
             dirTree->current = dirTree->root;
         }
         str = strtok(str, "/");
-        printf("%s\n", str);
         while(str != NULL){
             val = Movecurrent(dirTree, str);
             if(val != 0){
@@ -36,8 +35,8 @@ int mkdir(DirectoryTree* dirTree, char* cmd)
                 Movecurrent(dirTree, str);
             }
             str = strtok(NULL, "/");
-            printf("%s", str);
         }
+        dirTree->current = tmpNode;
     }
     else{
         str = strtok(NULL, " ");
@@ -61,7 +60,7 @@ int mkdir(DirectoryTree* dirTree, char* cmd)
                         return 0;
                     }
                     else{
-                        printf("no Path.\n");
+                        printf("mkdir: 그런 파일이나 디렉터리가 없습니다\n");
                         return -1;
                     }
                 }
@@ -82,21 +81,24 @@ int rm(DirectoryTree* dirTree, char* cmd)
     char yn[MAX_LENGTH];
 
     if(cmd == NULL){
-        printf("wrong command\n");
+        printf("rm: 잘못된 연산자\n");
         return -1;
     }
 
     if(strcmp(cmd, "-r") == 0){
         str = strtok(NULL, " ");
-
-        tmpNode = IsExist(dirTree, str, 'd');
+        if(str == NULL){
+            printf("rm: 잘못된 연산자\n");
+            return -1;
+        }
+        tmpNode = IsExistDir(dirTree, str, 'd');
 
         if(tmpNode == NULL){
-            printf("path doesn't exist.\n");
+            printf("rm: '%s'를 지울수없음: 그런 파일이나 디렉터리가 없습니다\n", str);
             return -1;
         }
         else{
-            printf("do you want to remove this file? [y/n] ");
+            printf("이 파일 또는 디렉터리를 지우겠습니까?[y/n] ");
             while(1){
             scanf("%s", yn);
 
@@ -107,7 +109,7 @@ int rm(DirectoryTree* dirTree, char* cmd)
                 else if(strcmp(yn, "n") == 0)
                     return -1;
                 else{
-                    printf("please type [y/n] ");
+                    printf("다시 한번 입력해주십시오[y/n] ");
                 }
             }
         }
@@ -115,16 +117,19 @@ int rm(DirectoryTree* dirTree, char* cmd)
     //need fix
     else if(strcmp(cmd, "-f") == 0){
         str = strtok(NULL, " ");
-
-        tmpNode = IsExist(dirTree, str, 'f');
-        tmpNode2 = IsExist(dirTree, str, 'd');
+        if(str == NULL){
+            printf("rm: 잘못된 연산자\n");
+            return -1;
+        }
+        tmpNode = IsExistDir(dirTree, str, 'f');
+        tmpNode2 = IsExistDir(dirTree, str, 'd');
 
         if(tmpNode2 != NULL){
-            printf("%s is a directory\n", str);
+            printf("rm:'%s'를 지울 수 없음: 디렉터리입니다\n", str);
             return -1;
         }
         if(tmpNode == NULL){
-            printf(" file doesn't exist.\n");
+            printf("rm: '%s'를 지울수없음: 그런 파일이나 디렉터리가 없습니다\n", str);
             return -1;
         }
         else{
@@ -133,11 +138,14 @@ int rm(DirectoryTree* dirTree, char* cmd)
     }
     else if(strcmp(cmd, "-rf") == 0){
         str = strtok(NULL, " ");
-
-        tmpNode = IsExist(dirTree, str, 'd');
+        if(str == NULL){
+            printf("rm: 잘못된 연산자\n");
+            return -1;
+        }
+        tmpNode = IsExistDir(dirTree, str, 'd');
 
         if(tmpNode == NULL){
-            printf("path doesn't exist.\n");
+            printf("rm: '%s'를 지울수없음: 그런 파일이나 디렉터리가 없습니다\n", str);
             return -1;
         }
         else{
@@ -145,19 +153,19 @@ int rm(DirectoryTree* dirTree, char* cmd)
         }
     }
     else{
-        tmpNode = IsExist(dirTree, cmd, 'f');
-        tmpNode2 = IsExist(dirTree, cmd, 'd');
+        tmpNode = IsExistDir(dirTree, cmd, 'f');
+        tmpNode2 = IsExistDir(dirTree, cmd, 'd');
 
         if(tmpNode2 != NULL){
-            printf("%s is a directory\n", cmd);
+            printf("rm:'%s'를 지울 수 없음: 디렉터리입니다\n", cmd);
             return -1;
         }
         if(tmpNode == NULL){
-            printf(" file doesn't exist.\n");
+            printf("rm: '%s'를 지울수없음: 그런 파일이나 디렉터리가 없습니다\n", cmd);
             return -1;
         }
         else{
-            printf("do you want to remove this file? [y/n] ");
+            printf("이 파일 또는 디렉터리를 지우겠습니까?[y/n] ");
             while(1){
             scanf("%s", yn);
 
@@ -168,7 +176,7 @@ int rm(DirectoryTree* dirTree, char* cmd)
                 else if(strcmp(yn, "n") == 0)
                     return -1;
                 else{
-                    printf("please type [y/n] ");
+                    printf("다시 한번 입력해주십시오[y/n] ");
                 }
             }
         }
@@ -178,12 +186,26 @@ int rm(DirectoryTree* dirTree, char* cmd)
 }
 int cd(DirectoryTree* dirTree, char* cmd)
 {
+    DirectoryNode* tmpNode = NULL;
     char tmp[MAX_DIR];
+
     if(cmd == NULL){
         strcpy(tmp, usrList->current->dir);
         MovePath(dirTree, tmp);
     }
     else{
+        tmpNode = IsExistDir(dirTree, cmd, 'd');
+        if(tmpNode != NULL){
+            if(HasPermission(tmpNode, 'r') != 0){
+                printf("-bash: cd: '%s': 허가거부\n", cmd);
+                return -1;
+            }
+        }
+        tmpNode = IsExistDir(dirTree, cmd,  'f');
+        if(tmpNode != NULL){
+            printf("-bash: cd: '%s': 디렉터리가 아닙니다\n", cmd);
+            return -1;
+        }
         MovePath(dirTree, cmd);
     }
     return 0;
@@ -238,7 +260,7 @@ int ls(DirectoryTree* dirTree, char* cmd)
             ListDir(dirTree, 1, 0);
         }
         else{
-                printf("wrong command\n");
+                printf("ls: 잘못된 연산자\n");
             return -1;
         }
     }
@@ -269,15 +291,19 @@ int cat(DirectoryTree* dirTree, char* cmd)
     **/
 
     if(cmd == NULL){
-        printf("wrong command\n");
+        printf("cat: 잘못된 연산자\n");
         return -1;
     }
 
     if(strcmp(cmd, ">") == 0){
+        if(HasPermission(dirTree->current, 'w') != 0){
+            printf("cat: '%s'파일을 만들 수 없음: 허가거부\n", dirTree->current->name);
+            return -1;
+        }
         str = strtok(NULL, " ");
-        tmpNode = IsExist(dirTree, str, 'd');
+        tmpNode = IsExistDir(dirTree, str, 'd');
         if(tmpNode != NULL){
-            printf("%s is a directory.\n", str);
+            printf("cat: '%s': 디렉터리입니다\n", str);
             return -1;
         }
         else{
@@ -287,15 +313,19 @@ int cat(DirectoryTree* dirTree, char* cmd)
     }
     else if(strcmp(cmd, "-n")== 0){
         str = strtok(NULL, " ");
-        tmpNode = IsExist(dirTree, str, 'd');
-        tmpNode2 = IsExist(dirTree, str, 'f');
+        tmpNode = IsExistDir(dirTree, str, 'd');
+        tmpNode2 = IsExistDir(dirTree, str, 'f');
 
         if(tmpNode == NULL && tmpNode2 == NULL){
-            printf("no directory of file.\n");
+            printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", str);
             return -1;
         }
         else if(tmpNode != NULL && tmpNode2 == NULL){
-            printf("%s is a directory.\n", str);
+            printf("cat: '%s': 디렉터리입니다\n", str);
+            return -1;
+        }
+        else if(tmpNode2 != NULL && HasPermission(tmpNode2, 'r') != 0){
+            printf("cat: '%s'파일을 열 수 없음: 허가거부\n", tmpNode2->name);
             return -1;
         }
         else{
@@ -304,14 +334,18 @@ int cat(DirectoryTree* dirTree, char* cmd)
     }
     else if(strcmp(cmd, "-b")== 0){
         str = strtok(NULL, " ");
-        tmpNode = IsExist(dirTree, str, 'd');
-        tmpNode2 = IsExist(dirTree, str, 'f');
+        tmpNode = IsExistDir(dirTree, str, 'd');
+        tmpNode2 = IsExistDir(dirTree, str, 'f');
         if(tmpNode == NULL && tmpNode2 == NULL){
-            printf("no directory of file.\n");
+            printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", str);
             return -1;
         }
         else if(tmpNode != NULL && tmpNode2 == NULL){
-            printf("%s is a directory.\n", str);
+            printf("cat: '%s': 디렉터리입니다\n", str);
+            return -1;
+        }
+        else if(tmpNode2 != NULL && HasPermission(tmpNode2, 'r') != 0){
+            printf("ls: '%s'파일을 열 수 없음: 허가거부\n", tmpNode2->name);
             return -1;
         }
         else{
@@ -319,14 +353,18 @@ int cat(DirectoryTree* dirTree, char* cmd)
         }
     }
     else{
-        tmpNode = IsExist(dirTree, cmd, 'd');
-        tmpNode2 = IsExist(dirTree, cmd, 'f');
+        tmpNode = IsExistDir(dirTree, cmd, 'd');
+        tmpNode2 = IsExistDir(dirTree, cmd, 'f');
         if(tmpNode == NULL && tmpNode2 == NULL){
-            printf("no directory of file.\n");
+            printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", cmd);
             return -1;
         }
         else if(tmpNode != NULL && tmpNode2 == NULL){
-            printf("%s is a directory.\n", cmd);
+            printf("cat: '%s': 디렉터리입니다\n", cmd);
+            return -1;
+        }
+        else if(tmpNode2 != NULL && HasPermission(tmpNode2, 'r') != 0){
+            printf("cat: '%s'파일을 열 수 없음: 허가거부\n", tmpNode2->name);
             return -1;
         }
         else{
@@ -342,22 +380,36 @@ int chmod(DirectoryTree* dirTree, char* cmd)
     char* str;
     int tmp;
 
+    if(cmd == NULL){
+        printf("chmod: 잘못된 연산자\n");
+        return -1;
+    }
+
     if(strcmp(cmd, "-R") == 0){
         str = strtok(NULL, " ");
+        if(str == NULL){
+            printf("chmod: 잘못된 연산자\n");
+            return -1;
+        }
         if(str[0]-'0'<8 && str[1]-'0'<8 && str[2]-'0'<8 && strlen(str)==3){
             tmp = atoi(str);
             str = strtok(NULL, " ");
-            tmpNode = IsExist(dirTree, str, 'd');
+            if(str == NULL){
+                printf("rm: 잘못된 연산자\n");
+                return -1;
+            }
+            tmpNode = IsExistDir(dirTree, str, 'd');
             if(tmpNode != NULL){
-                ChangeModeAll(tmpNode, tmp);
+                ChangeMode(dirTree, tmp, str);
+                ChangeModeAll(tmpNode->LeftChild, tmp);
             }
             else{
-                printf("No file exists.\n");
+                printf("chmod: '%s' 그런 파일이나 디렉터리가 없습니다\n", str);
                 return -1;
             }
         }
         else{
-            printf("wrong command\n");
+            printf("chmod: 잘못된 모드: '%s'\n", str);
             return -1;
         }
     }
@@ -365,11 +417,69 @@ int chmod(DirectoryTree* dirTree, char* cmd)
         if(cmd[0]-'0'<8 && cmd[1]-'0'<8 && cmd[2]-'0'<8 && strlen(cmd)==3){
             tmp = atoi(cmd);
             str = strtok(NULL, " ");
+            if(str == NULL){
+                printf("rm: 잘못된 연산자\n");
+                return -1;
+            }
             ChangeMode(dirTree, tmp, str);
         }
         else{
-            printf("wrong command\n");
+            printf("chmod: 잘못된 모드: '%s'\n", cmd);
             return -1;
+        }
+    }
+    return 0;
+}
+
+int chown(DirectoryTree* dirTree, char* cmd)
+{
+    DirectoryNode* tmpNode = NULL;
+    UserNode* tmpUser = NULL;
+    char* str;
+    char tmp[MAX_NAME];
+
+    if(cmd == NULL){
+        printf("chown: 잘못된 연산자\n");
+        return -1;
+    }
+    if(strcmp(cmd, "-R") == 0){
+        str = strtok(NULL, " ");
+        if(str == NULL){
+            printf("chmod: 잘못된 연산자\n");
+            return -1;
+        }
+        tmpUser = IsExistUser(usrList, str);
+        if(tmpUser != NULL){
+            strncpy(tmp, str, MAX_NAME);
+        }
+        else{
+            printf("chown: '%s' 유저가 존재하지 않습니다\n", str);
+            return -1;
+        }
+        str = strtok(NULL, " ");
+        if(str == NULL){
+            printf("chown: 잘못된 연산자\n");
+            return -1;
+        }
+        tmpNode = IsExistDir(dirTree, str, 'd');
+        if(tmpNode != NULL){
+            ChangeOwner(dirTree, tmp, str);
+            ChangeOwnerAll(tmpNode->LeftChild, tmp);
+        }
+        else{
+            printf("chown: '%s': 그런 파일이나 디렉터리가 없습니다\n", str);
+            return -1;
+        }
+    }
+    else{
+        strncpy(tmp, cmd, MAX_NAME);
+        str = strtok(NULL, " ");
+        if(str == NULL){
+            printf("chown: 잘못된 연산자\n");
+            return -1;
+        }
+        else{
+            ChangeOwner(dirTree, tmp, str);
         }
     }
     return 0;
@@ -423,8 +533,15 @@ void Instruction(DirectoryTree* dirTree, char* cmd)
             SaveDir(dirTree, dStack);
         }
     }
+    else if(strcmp(str, "chown") == 0){
+        str = strtok(NULL, " ");
+        val = chown(dirTree, str);
+        if(val == 0){
+            SaveDir(dirTree, dStack);
+        }
+    }
     else{
-        printf("wrong command\n");
+        printf("잘못된 명령어 입니다\n");
     }
     return;
 }

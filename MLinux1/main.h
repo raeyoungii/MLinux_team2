@@ -77,7 +77,7 @@ int Mode2Permission(DirectoryNode* dirNode);
 void PrintPermission(DirectoryNode* dirNode);
 void DestroyNode(DirectoryNode* dirNode);
 void DestroyDir(DirectoryNode* dirNode);
-DirectoryNode* IsExist(DirectoryTree* dirTree, char* dirName, char type);
+DirectoryNode* IsExistDir(DirectoryTree* dirTree, char* dirName, char type);
 
 //save & load
 void getPath(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack);
@@ -103,7 +103,9 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o);
 //chmod
 int ChangeMode(DirectoryTree* dirTree, int mode, char* dirName);
 void ChangeModeAll(DirectoryNode* dirNode, int mode);
-
+//chown
+int ChangeOwner(DirectoryTree* dirTree, char* userName, char* dirName);
+void ChangeOwnerAll(DirectoryNode* dirNode, char* userName);
 //stack
 int IsEmpty(Stack* dirStack);
 Stack* InitializeStack();
@@ -122,6 +124,7 @@ int pwd(DirectoryTree* dirTree, Stack* dirStack);
 int ls(DirectoryTree* dirTree, char* cmd);
 int cat(DirectoryTree* dirTree, char* cmd);
 int chmod(DirectoryTree* dirTree, char* cmd);
+int chown(DirectoryTree* dirTree, char* cmd);
 void Instruction(DirectoryTree* dirTree, char* cmd);
 
 //user
@@ -131,6 +134,7 @@ void WriteUser(UserList* userList, UserNode* userNode);
 void SaveUserList(UserList* userList);
 int ReadUser(UserList* userList, char* tmp);
 UserList* LoadUserList();
+UserNode* IsExistUser(UserList* userList, char* userName);
 char* GetUID(DirectoryNode* dirNode);
 char* GetGID(DirectoryNode* dirNode);
 int HasPermission(DirectoryNode* dirNode, char o);

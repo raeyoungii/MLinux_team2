@@ -1,17 +1,20 @@
 / d 755 4096 0 0 5 24 6 46
 home d 755 4096 0 0 5 24 6 46 /
 os d 755 4096 1 1 5 24 6 46 /home
+rae d 755 4096 2 2 5 27 1 54 /home
 aa d 755 4096 1 1 5 24 6 46 /home/os
 bb d 755 4096 1 1 5 24 6 46 /home/os
-cc d 755 4096 1 1 5 24 8 3 /home/os
-dd d 400 4096 1 1 5 26 21 20 /home/os
-gg d 755 4096 1 1 5 26 21 34 /home/os/dd
+cc d 755 4096 2 2 5 24 8 3 /home/os
+dd d 755 4096 1 1 5 27 2 46 /home/os
+gg d 755 4096 1 1 5 27 2 49 /home/os/dd
+hll f 644 6 1 1 5 27 3 3 /home/os/dd
+zz d 755 4096 1 1 5 27 4 0 /home/os/cc
 yes d 755 4096 1 1 5 24 6 46 /home/os/bb
 no d 755 4096 1 1 5 24 6 46 /home/os/bb/yes
 test1 d 755 4096 1 1 5 24 6 46 /home/os/aa
 test2 d 755 4096 1 1 5 24 6 46 /home/os/aa
 hello.txt f 644 12 1 1 5 25 22 9 /home/os/aa
-dd d 333 4096 1 1 5 25 2 17 /home/os/aa
+dd d 755 4096 1 1 5 25 2 17 /home/os/aa
 .abc d 755 4096 1 1 5 25 4 44 /home/os/aa
 hello f 644 6 1 1 5 26 19 40 /home/os/aa
 gg d 755 4096 1 1 5 26 21 16 /home/os/aa/dd
