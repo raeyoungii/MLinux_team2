@@ -32,7 +32,7 @@ int mkdir(DirectoryTree* dirTree, char* cmd)
         while(str != NULL){
             val = Movecurrent(dirTree, str);
             if(val != 0){
-                MakeDir(dirTree, str, 0);
+                MakeDir(dirTree, str, 'd');
                 Movecurrent(dirTree, str);
             }
             str = strtok(NULL, "/");
@@ -46,7 +46,7 @@ int mkdir(DirectoryTree* dirTree, char* cmd)
                 dirTree->current = dirTree->root;
 
             if(strstr(cmd, "/") == NULL){
-                MakeDir(dirTree, cmd, 0);
+                MakeDir(dirTree, cmd, 'd');
                 return 0;
             }
             str = strtok(cmd, "/");
@@ -56,7 +56,7 @@ int mkdir(DirectoryTree* dirTree, char* cmd)
                     strncpy(tmp, str, MAX_NAME);
                     str = strtok(NULL, "/");
                     if(str == NULL){
-                        MakeDir(dirTree, tmp, 0);
+                        MakeDir(dirTree, tmp, 'd');
                         dirTree->current = tmpNode;
                         return 0;
                     }

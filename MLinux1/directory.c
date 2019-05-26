@@ -247,12 +247,16 @@ DirectoryTree* InitializeTree()
     return dirTree;
 }
 //type==0: folder, type==1: file
-int MakeDir(DirectoryTree* dirTree, char* dirName, int type)
+int MakeDir(DirectoryTree* dirTree, char* dirName, char type)
 {
     //variables
     DirectoryNode* NewNode = (DirectoryNode*)malloc(sizeof(DirectoryNode));
     DirectoryNode* tmpNode = NULL;
 
+    if(HasPermission(dirTree->current, 'w') != 0){
+        printf("mkdir: '%s'디렉토리를 만들 수 없습니다: 허가 거부\n", dirName);
+        return -1;
+    }
     if(strcmp(dirName, ".") == 0 || strcmp(dirName, "..") == 0){
         printf("can't make directory\n");
         return -1;
@@ -316,6 +320,10 @@ int RemoveDir(DirectoryTree* dirTree, char* dirName)
     DirectoryNode* tmpNode = NULL;
     DirectoryNode* prevNode = NULL;
 
+    if(HasPermission(dirTree->current, 'w') != 0){
+        printf("rm: '%s'디렉터리 또는 파일을 지울 수 없습니다: 허가거부\n", dirName);
+        return -1;
+    }
     tmpNode = dirTree->current->LeftChild;
 
     if(tmpNode == NULL){
@@ -358,6 +366,8 @@ int RemoveDir(DirectoryTree* dirTree, char* dirName)
 //cd
 int Movecurrent(DirectoryTree* dirTree, char* dirPath)
 {
+    DirectoryNode* tmpNode = NULL;
+
     if(strcmp(dirPath,".") == 0){
     }
     else if(strcmp(dirPath,"..") == 0){
@@ -366,9 +376,11 @@ int Movecurrent(DirectoryTree* dirTree, char* dirPath)
         }
     }
     else{
+
         //if input path exist
-        if( IsExist(dirTree, dirPath, 'd') != NULL){
-            dirTree->current = IsExist(dirTree, dirPath, 'd');
+        tmpNode = IsExist(dirTree, dirPath, 'd');
+        if(tmpNode != NULL){
+            dirTree->current = tmpNode;
         }
         else
             return -1;
@@ -383,6 +395,7 @@ int MovePath(DirectoryTree* dirTree, char* dirPath)
     char tmpPath[MAX_DIR];
     char* str = NULL;
     int val = 0;
+
     //set tmp
     strncpy(tmpPath, dirPath, MAX_DIR);
     tmpNode = dirTree->current;
@@ -454,7 +467,10 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
 
     tmpNode = dirTree->current->LeftChild;
 
-
+    if(HasPermission(dirTree->current, 'r') != 0){
+        printf("ls: '%s'디렉터리를 열 수 없음: 허가거부\n", dirTree->current->name);
+        return -1;
+    }
 
     if(l == 0){
         if(a == 0){
@@ -491,7 +507,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             printf("%c", dirTree->current->type);
             PrintPermission(dirTree->current);
             printf("  ");
-            printf("%-5s%-5s", GetID(usrList, dirTree->current->UID), GetID(usrList, dirTree->current->GID));
+            printf("%-5s%-5s", GetUID(dirTree->current), GetGID(dirTree->current));
             printf("%5d ", dirTree->current->SIZE);
             GetMonth(dirTree->current->month);
             printf(" %d %02d:%02d ", dirTree->current->day, dirTree->current->hour, dirTree->current->minute);
@@ -501,7 +517,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
                 printf("%c", dirTree->current->Parent->type);
                 PrintPermission(dirTree->current->Parent);
                 printf("  ");
-                printf("%-5s%-5s", GetID(usrList, dirTree->current->Parent->UID), GetID(usrList, dirTree->current->Parent->GID));
+                printf("%-5s%-5s", GetUID(dirTree->current->Parent), GetGID(dirTree->current->Parent));
                 printf("%5d ", dirTree->current->SIZE);
                 GetMonth(dirTree->current->month);
                 printf(" %d %02d:%02d ", dirTree->current->Parent->day, dirTree->current->Parent->hour, dirTree->current->Parent->minute);
@@ -519,7 +535,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             printf("%c", tmpNode->type);
             PrintPermission(tmpNode);
             printf("  ");
-            printf("%-5s%-5s", GetID(usrList, tmpNode->UID), GetID(usrList, tmpNode->GID));
+            printf("%-5s%-5s", GetUID(tmpNode), GetGID(tmpNode));
             printf("%5d ", tmpNode->SIZE);
             GetMonth(tmpNode->month);
             printf(" %d %02d:%02d ", tmpNode->day, tmpNode->hour, tmpNode->minute);
@@ -602,7 +618,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
         }
         //if file doesn't exist
         else{
-            MakeDir(dirTree, fName, 1);
+            MakeDir(dirTree, fName, 'f');
         }
         //write size
         tmpNode = IsExist(dirTree, fName, 'f');

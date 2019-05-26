@@ -20,9 +20,8 @@ int main()
             usr = '$';
 
         printf("This is OS-Test by RaeYoung Kim\n");
-        printf("//--version 8.4.3--//\n");
+        printf("//--version 10.4.3--//\n");
         printf("[%s@os-Virtualbox %s] %c ",usrList->current->name, Linux->current->name, usr);
-
 
     while(1){
         gets(cmd);

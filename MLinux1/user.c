@@ -150,15 +150,107 @@ UserList* LoadUserList()
 }
 
 
-char* GetID(UserList* userList, int ID)
+char* GetUID(DirectoryNode* dirNode)
 {
     UserNode* tmpNode = NULL;
 
-    tmpNode = userList->head;
+    tmpNode = usrList->head;
     while(tmpNode != NULL){
-        if(tmpNode->UID == ID)
+        if(tmpNode->UID == dirNode->UID)
             break;
         tmpNode = tmpNode->LinkNode;
     }
     return tmpNode->name;
 }
+
+char* GetGID(DirectoryNode* dirNode)
+{
+    UserNode* tmpNode = NULL;
+
+    tmpNode = usrList->head;
+    while(tmpNode != NULL){
+        if(tmpNode->GID == dirNode->GID)
+            break;
+        tmpNode = tmpNode->LinkNode;
+    }
+    return tmpNode->name;
+}
+
+int HasPermission(DirectoryNode* dirNode, char o)
+{
+    if(usrList->current->UID == 0)
+        return 0;
+
+    if(usrList->current->UID == dirNode->UID){
+        if(o == 'r'){
+            if(dirNode->permission[0] == 0)
+                return -1;
+            else
+                return 0;
+        }
+        if(o == 'w'){
+            if(dirNode->permission[1] == 0)
+                return -1;
+            else
+                return 0;
+        }
+        if(o == 'x'){
+            if(dirNode->permission[2] == 0)
+                return -1;
+            else
+                return 0;
+        }
+    }
+    else if(usrList->current->GID == dirNode->GID){
+        if(o == 'r'){
+            if(dirNode->permission[3] == 0)
+                return -1;
+            else
+                return 0;
+        }
+        if(o == 'w'){
+            if(dirNode->permission[4] == 0)
+                return -1;
+            else
+                return 0;
+        }
+        if(o == 'x'){
+            if(dirNode->permission[5] == 0)
+                return -1;
+            else
+                return 0;
+        }
+    }
+    else{
+        if(o == 'r'){
+            if(dirNode->permission[6] == 0)
+                return -1;
+            else
+                return 0;
+        }
+        if(o == 'w'){
+            if(dirNode->permission[7] == 0)
+                return -1;
+            else
+                return 0;
+        }
+        if(o == 'x'){
+            if(dirNode->permission[8] == 0)
+                return -1;
+            else
+                return 0;
+        }
+    }
+    return -1;
+}
+
+
+
+
+
+
+
+
+
+
+

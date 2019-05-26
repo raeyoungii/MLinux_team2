@@ -88,7 +88,7 @@ DirectoryTree* LoadDir();
 
 //mkdir
 DirectoryTree* InitializeTree();
-int MakeDir(DirectoryTree* dirTree, char* dirName, int type);
+int MakeDir(DirectoryTree* dirTree, char* dirName, char type);
 //rm
 int RemoveDir(DirectoryTree* dirTree, char* dirName);
 //cd
@@ -131,7 +131,9 @@ void WriteUser(UserList* userList, UserNode* userNode);
 void SaveUserList(UserList* userList);
 int ReadUser(UserList* userList, char* tmp);
 UserList* LoadUserList();
-char* GetID(UserList* userList, int ID);
+char* GetUID(DirectoryNode* dirNode);
+char* GetGID(DirectoryNode* dirNode);
+int HasPermission(DirectoryNode* dirNode, char o);
 
 
 DirectoryTree* Linux;
