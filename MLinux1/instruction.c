@@ -98,7 +98,7 @@ int rm(DirectoryTree* dirTree, char* cmd)
             return -1;
         }
         else{
-            printf("이 파일 또는 디렉터리를 지우겠습니까?[y/n] ");
+            printf("이 디렉터리를 지우겠습니까?[y/n] ");
             while(1){
             scanf("%s", yn);
 
@@ -165,10 +165,9 @@ int rm(DirectoryTree* dirTree, char* cmd)
             return -1;
         }
         else{
-            printf("이 파일 또는 디렉터리를 지우겠습니까?[y/n] ");
+            printf("이 파일을 지우겠습니까?[y/n] ");
             while(1){
             scanf("%s", yn);
-
                 if(strcmp(yn, "y") == 0){
                     RemoveDir(dirTree, cmd);
                     return 0;
@@ -188,6 +187,7 @@ int cd(DirectoryTree* dirTree, char* cmd)
 {
     DirectoryNode* tmpNode = NULL;
     char tmp[MAX_DIR];
+    int val;
 
     if(cmd == NULL){
         strcpy(tmp, usrList->current->dir);
@@ -206,7 +206,9 @@ int cd(DirectoryTree* dirTree, char* cmd)
             printf("-bash: cd: '%s': 디렉터리가 아닙니다\n", cmd);
             return -1;
         }
-        MovePath(dirTree, cmd);
+        val = MovePath(dirTree, cmd);
+        if(val != 0)
+            printf("-bash: cd: '%s': 그런 파일이나 디렉터리가 없습니다.\n", cmd);
     }
     return 0;
 }
@@ -353,6 +355,11 @@ int cat(DirectoryTree* dirTree, char* cmd)
         }
     }
     else{
+        if(strcmp(cmd, "/etc/passwd") == 0){
+            Concatenate(dirTree, cmd, 4);
+            return 0;
+        }
+
         tmpNode = IsExistDir(dirTree, cmd, 'd');
         tmpNode2 = IsExistDir(dirTree, cmd, 'f');
         if(tmpNode == NULL && tmpNode2 == NULL){
@@ -485,6 +492,19 @@ int chown(DirectoryTree* dirTree, char* cmd)
     return 0;
 }
 
+int find_(DirectoryTree* dirTree, char* cmd)
+{
+    if(cmd == NULL){
+        FindDir(dirTree, dirTree->current->name);
+        return 0;
+    }
+    else{
+        FindDir(dirTree, cmd);
+    }
+
+    return 0;
+}
+
 void Instruction(DirectoryTree* dirTree, char* cmd)
 {
     char* str;
@@ -539,6 +559,11 @@ void Instruction(DirectoryTree* dirTree, char* cmd)
         if(val == 0){
             SaveDir(dirTree, dStack);
         }
+    }
+    else if(strcmp(str, "find") == 0){
+        str = strtok(NULL, " ");
+        find_(dirTree, str);
+
     }
     else{
         printf("잘못된 명령어 입니다\n");

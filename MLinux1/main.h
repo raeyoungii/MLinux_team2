@@ -79,12 +79,14 @@ void DestroyNode(DirectoryNode* dirNode);
 void DestroyDir(DirectoryNode* dirNode);
 DirectoryNode* IsExistDir(DirectoryTree* dirTree, char* dirName, char type);
 
+
 //save & load
 void getPath(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack);
 void WriteNode(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack);
 void SaveDir(DirectoryTree* dirTree, Stack* dirStack);
 int ReadNode(DirectoryTree* dirTree, char* tmp);
 DirectoryTree* LoadDir();
+
 
 //mkdir
 DirectoryTree* InitializeTree();
@@ -106,6 +108,11 @@ void ChangeModeAll(DirectoryNode* dirNode, int mode);
 //chown
 int ChangeOwner(DirectoryTree* dirTree, char* userName, char* dirName);
 void ChangeOwnerAll(DirectoryNode* dirNode, char* userName);
+//find
+int ReadDir(DirectoryTree* dirTree, char* tmp, char* dirName);
+void FindDir(DirectoryTree* dirTree, char* dirName);
+
+
 //stack
 int IsEmpty(Stack* dirStack);
 Stack* InitializeStack();
@@ -116,6 +123,7 @@ char* Pop(Stack* dirStack);
 //time
 void GetMonth(int i);
 
+
 //Instruction
 int mkdir(DirectoryTree* dirTree, char* cmd);
 int rm(DirectoryTree* dirTree, char* cmd);
@@ -125,7 +133,9 @@ int ls(DirectoryTree* dirTree, char* cmd);
 int cat(DirectoryTree* dirTree, char* cmd);
 int chmod(DirectoryTree* dirTree, char* cmd);
 int chown(DirectoryTree* dirTree, char* cmd);
+int find_(DirectoryTree* dirTree, char* cmd);
 void Instruction(DirectoryTree* dirTree, char* cmd);
+
 
 //user
 UserList* InitializeUser();
@@ -140,6 +150,7 @@ char* GetGID(DirectoryNode* dirNode);
 int HasPermission(DirectoryNode* dirNode, char o);
 
 
+//global variable
 DirectoryTree* Linux;
 Stack* dStack;
 UserList* usrList;

@@ -64,14 +64,14 @@ int AddUser(UserList* userList, char* userName)
 
 void WriteUser(UserList* userList, UserNode* userNode)
 {
-    fprintf(User, "%s %s ", userNode->name, userNode->dir);
-    fprintf(User, "%d %d %d %d %d %d", userNode->UID, userNode->GID, userNode->month, userNode->day, userNode->hour, userNode->minute);
+    fprintf(User, "%s %d %d %d %d %d %d %s", userNode->name, userNode->UID, userNode->GID, userNode->month, userNode->day, userNode->hour, userNode->minute, userNode->dir);
 
     if(userNode == userList->head)
         fprintf(User, " /");
     if(userNode == userList->current)
         fprintf(User, " c");
-    fprintf(User, "\n");
+    if(userNode != userList->tail)
+        fprintf(User, "\n");
     if(userNode->LinkNode != NULL){
         WriteUser(userList, userNode->LinkNode);
     }
@@ -97,8 +97,6 @@ int ReadUser(UserList* userList, char* tmp)
     str = strtok(tmp, " ");
     strncpy(NewNode->name, str, MAX_NAME);
     str = strtok(NULL, " ");
-    strncpy(NewNode->dir, str, MAX_DIR);
-    str = strtok(NULL, " ");
     NewNode->UID = atoi(str);
     str = strtok(NULL, " ");
     NewNode->GID = atoi(str);
@@ -110,6 +108,8 @@ int ReadUser(UserList* userList, char* tmp)
     NewNode->hour = atoi(str);
     str = strtok(NULL, " ");
     NewNode->minute = atoi(str);
+    str = strtok(NULL, " ");
+    strncpy(NewNode->dir, str, MAX_DIR);
 
 
     str = strtok(NULL, " ");

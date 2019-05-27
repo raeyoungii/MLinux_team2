@@ -501,35 +501,65 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
     else{
         if(a == 0){
             if(tmpNode == NULL){
+                printf("합계: 0\n");
                 return -1;
             }
         }
         if(a == 1){
-            if(dirTree->current->type == 'd')
-                type = 'd';
-            else if(dirTree->current->type == 'f')
-                type = '-';
-            printf("%c", type);
+            tmpNode2 = dirTree->current->LeftChild;
+            if(tmpNode2 == NULL){
+                cnt = 2;
+            }
+            else{
+                if(tmpNode2->type == 'd')
+                    cnt = 4;
+                else
+                    cnt = 3;
+
+                while(tmpNode2->RightSibling != NULL){
+                    tmpNode2 = tmpNode2->RightSibling;
+                    if(tmpNode2->type == 'd')
+                        cnt = cnt + 2;
+                    else
+                        cnt = cnt + 1;
+                }
+            }
+
+            printf("%c", dirTree->current->type);
             PrintPermission(dirTree->current);
-            printf("  ");
+            printf("%3d", cnt);
+            printf("   ");
             printf("%-5s%-5s", GetUID(dirTree->current), GetGID(dirTree->current));
             printf("%5d ", dirTree->current->SIZE);
-            GetMonth(dirTree->current->month);
-            printf(" %d %02d:%02d ", dirTree->current->day, dirTree->current->hour, dirTree->current->minute);
+            printf("%d월 %d %02d:%02d ",dirTree->current->month, dirTree->current->day, dirTree->current->hour, dirTree->current->minute);
             printf(".\n");
 
-                if(dirTree->current != dirTree->root){
-                    if(dirTree->current->Parent->type == 'd')
-                    type = 'd';
-                else if(dirTree->current->Parent->type == 'f')
-                    type = '-';
-                printf("%c", type);
+            if(dirTree->current != dirTree->root){
+                tmpNode2 = dirTree->current->Parent->LeftChild;
+                if(tmpNode2 == NULL){
+                    cnt = 2;
+                }
+                else{
+                    if(tmpNode2->type == 'd')
+                        cnt = 4;
+                    else
+                        cnt = 3;
+
+                    while(tmpNode2->RightSibling != NULL){
+                        tmpNode2 = tmpNode2->RightSibling;
+                        if(tmpNode2->type == 'd')
+                            cnt = cnt + 2;
+                        else
+                            cnt = cnt + 1;
+                    }
+                }
+                printf("%c", dirTree->current->Parent->type);
                 PrintPermission(dirTree->current->Parent);
-                printf("  ");
+                printf("%3d", cnt);
+                printf("   ");
                 printf("%-5s%-5s", GetUID(dirTree->current->Parent), GetGID(dirTree->current->Parent));
                 printf("%5d ", dirTree->current->SIZE);
-                GetMonth(dirTree->current->month);
-                printf(" %d %02d:%02d ", dirTree->current->Parent->day, dirTree->current->Parent->hour, dirTree->current->Parent->minute);
+                printf("%d월 %d %02d:%02d ",dirTree->current->Parent->month, dirTree->current->Parent->day, dirTree->current->Parent->hour, dirTree->current->Parent->minute);
                 printf("..\n");
             }
         }
@@ -560,7 +590,6 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
                         cnt = cnt + 2;
                     else
                         cnt = cnt + 1;
-
                 }
             }
             if(tmpNode->type == 'd')
@@ -573,8 +602,7 @@ int ListDir(DirectoryTree* dirTree, int a, int l)
             printf("   ");
             printf("%-5s%-5s", GetUID(tmpNode), GetGID(tmpNode));
             printf("%5d ", tmpNode->SIZE);
-            GetMonth(tmpNode->month);
-            printf(" %d %02d:%02d ", tmpNode->day, tmpNode->hour, tmpNode->minute);
+            printf("%d월 %d %02d:%02d ",tmpNode->month, tmpNode->day, tmpNode->hour, tmpNode->minute);
 
             printf("%-15s\n", tmpNode->name);
             tmpNode = tmpNode->RightSibling;
@@ -590,11 +618,36 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int o)
     DirectoryNode* tmpNode = NULL;
     FILE* fp;
     char buf[MAX_BUFFER];
+    char* str;
     int tmp = 0;
     int cnt = 1;
 
     //file read
     if(o != 0){
+        if(o == 4){
+            fp = fopen("User.txt", "r");
+            while(feof(fp) == 0){
+                fgets(buf, sizeof(buf), fp);
+                if(feof(fp) != 0)
+                    break;
+                if(buf[5] != '0')
+                    printf("\n");
+                str = strtok(buf, " ");
+                fprintf(stdout, "%s:x:", str);
+                str = strtok(NULL, " ");
+                fprintf(stdout, "%s:", str);
+                str = strtok(NULL, " ");
+                fprintf(stdout, "%s:", str);
+                str = strtok(NULL, " ");
+                str = strtok(NULL, " ");
+                str = strtok(NULL, " ");
+                str = strtok(NULL, " ");
+                str = strtok(NULL, " ");
+                fprintf(stdout, "%s", str);
+            }
+            fclose(fp);
+
+        }
         tmpNode = IsExistDir(dirTree,fName, 'f');
 
         if(tmpNode == NULL){
@@ -708,6 +761,8 @@ void ChangeModeAll(DirectoryNode* dirNode, int mode)
     Mode2Permission(dirNode);
 }
 
+
+//chown
 int ChangeOwner(DirectoryTree* dirTree, char* userName, char* dirName)
 {
     DirectoryNode* tmpNode = NULL;
@@ -770,5 +825,40 @@ void ChangeOwnerAll(DirectoryNode* dirNode, char* userName)
     }
     dirNode->UID = tmpUser->UID;
     dirNode->GID = tmpUser->GID;
+}
 
+
+//find
+int ReadDir(DirectoryTree* dirTree, char* tmp, char* dirName)
+{
+    char* str;
+    char str2[MAX_NAME];
+
+    str = strtok(tmp, " ");
+    strcpy(str2, str);
+    for(int i=0;i<10;i++){
+        str = strtok(NULL, " ");
+    }
+    if(str != NULL){
+        if(strstr(str, dirName) != NULL){
+            str[strlen(str)-1] = '\0';
+            printf("%s/%s\n", str, str2);
+
+        }
+    }
+
+    return 0;
+}
+
+void FindDir(DirectoryTree* dirTree, char* dirName)
+{
+    char tmp[MAX_LENGTH];
+
+    Dir = fopen("Directory.txt", "r");
+
+    while(fgets(tmp, MAX_LENGTH, Dir) != NULL){
+        ReadDir(dirTree, tmp, dirName);
+    }
+
+    fclose(Dir);
 }
