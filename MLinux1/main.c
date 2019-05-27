@@ -37,7 +37,7 @@ int main()
             continue;
         }
         if(strcmp(cmd, "exit") == 0){
-            printf("·Î±×¾Æ¿ô");
+            printf("Logout");
             SaveUserList(usrList);
             break;
         }

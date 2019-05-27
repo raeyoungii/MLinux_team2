@@ -843,7 +843,6 @@ int ReadDir(DirectoryTree* dirTree, char* tmp, char* dirName)
         if(strstr(str, dirName) != NULL){
             str[strlen(str)-1] = '\0';
             printf("%s/%s\n", str, str2);
-
         }
     }
 
