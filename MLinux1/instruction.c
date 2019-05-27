@@ -494,12 +494,23 @@ int chown(DirectoryTree* dirTree, char* cmd)
 
 int find_(DirectoryTree* dirTree, char* cmd)
 {
+    char* str;
     if(cmd == NULL){
-        FindDir(dirTree, dirTree->current->name);
+        FindDir(dirTree, dirTree->current->name, 1);
         return 0;
     }
+    else if(cmd[0] == '-'){
+        if(strcmp(cmd, "-name") == 0){
+            str = strtok(NULL, " ");
+            FindDir(dirTree, str, 0);
+        }
+        else{
+            printf("find: 잘못된 연산자\n");
+            return -1;
+        }
+    }
     else{
-        FindDir(dirTree, cmd);
+        FindDir(dirTree, cmd, 1);
     }
 
     return 0;

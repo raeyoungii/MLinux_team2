@@ -109,8 +109,8 @@ void ChangeModeAll(DirectoryNode* dirNode, int mode);
 int ChangeOwner(DirectoryTree* dirTree, char* userName, char* dirName);
 void ChangeOwnerAll(DirectoryNode* dirNode, char* userName);
 //find
-int ReadDir(DirectoryTree* dirTree, char* tmp, char* dirName);
-void FindDir(DirectoryTree* dirTree, char* dirName);
+int ReadDir(DirectoryTree* dirTree, char* tmp, char* dirName,int o);
+void FindDir(DirectoryTree* dirTree, char* dirName, int o);
 
 
 //stack

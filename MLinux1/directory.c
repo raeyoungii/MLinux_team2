@@ -829,34 +829,47 @@ void ChangeOwnerAll(DirectoryNode* dirNode, char* userName)
 
 
 //find
-int ReadDir(DirectoryTree* dirTree, char* tmp, char* dirName)
+int ReadDir(DirectoryTree* dirTree, char* tmp, char* dirName, int o)
 {
     char* str;
     char str2[MAX_NAME];
-
-    str = strtok(tmp, " ");
-    strcpy(str2, str);
-    for(int i=0;i<10;i++){
-        str = strtok(NULL, " ");
-    }
-    if(str != NULL){
-        if(strstr(str, dirName) != NULL){
-            str[strlen(str)-1] = '\0';
-            printf("%s/%s\n", str, str2);
+    if(o == 0){
+        str = strtok(tmp, " ");
+        strcpy(str2, str);
+        for(int i=0;i<10;i++){
+            str = strtok(NULL, " ");
+        }
+        if(str != NULL){
+            if(strstr(str2, dirName) != NULL){
+                str[strlen(str)-1] = '\0';
+                printf("%s/%s\n", str, str2);
+            }
         }
     }
-
+    else{
+        str = strtok(tmp, " ");
+        strcpy(str2, str);
+        for(int i=0;i<10;i++){
+            str = strtok(NULL, " ");
+        }
+        if(str != NULL){
+            if(strstr(str, dirName) != NULL){
+                str[strlen(str)-1] = '\0';
+                printf("%s/%s\n", str, str2);
+            }
+        }
+    }
     return 0;
 }
 
-void FindDir(DirectoryTree* dirTree, char* dirName)
+void FindDir(DirectoryTree* dirTree, char* dirName, int o)
 {
     char tmp[MAX_LENGTH];
 
     Dir = fopen("Directory.txt", "r");
 
     while(fgets(tmp, MAX_LENGTH, Dir) != NULL){
-        ReadDir(dirTree, tmp, dirName);
+        ReadDir(dirTree, tmp, dirName, o);
     }
 
     fclose(Dir);
