@@ -72,6 +72,20 @@ time_t ltime;
 struct tm *today;
 
 
+//instruction.c
+int mkdir(DirectoryTree* dirTree, char* cmd);
+int rm(DirectoryTree* dirTree, char* cmd);
+int cd(DirectoryTree* dirTree, char* cmd);
+int pwd(DirectoryTree* dirTree, Stack* dirStack);
+int ls(DirectoryTree* dirTree, char* cmd);
+int cat(DirectoryTree* dirTree, char* cmd);
+int chmod(DirectoryTree* dirTree, char* cmd);
+int chown(DirectoryTree* dirTree, char* cmd);
+int find_(DirectoryTree* dirTree, char* cmd);
+void Instruction(DirectoryTree* dirTree, char* cmd);
+
+
+//directory.c
 //utility
 int Mode2Permission(DirectoryNode* dirNode);
 void PrintPermission(DirectoryNode* dirNode);
@@ -79,14 +93,12 @@ void DestroyNode(DirectoryNode* dirNode);
 void DestroyDir(DirectoryNode* dirNode);
 DirectoryNode* IsExistDir(DirectoryTree* dirTree, char* dirName, char type);
 
-
 //save & load
 void getPath(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack);
 void WriteNode(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack);
 void SaveDir(DirectoryTree* dirTree, Stack* dirStack);
 int ReadNode(DirectoryTree* dirTree, char* tmp);
 DirectoryTree* LoadDir();
-
 
 //mkdir
 DirectoryTree* InitializeTree();
@@ -113,31 +125,7 @@ int ReadDir(DirectoryTree* dirTree, char* tmp, char* dirName,int o);
 void FindDir(DirectoryTree* dirTree, char* dirName, int o);
 
 
-//stack
-int IsEmpty(Stack* dirStack);
-Stack* InitializeStack();
-int Push(Stack* dirStack, char* dirName);
-char* Pop(Stack* dirStack);
-
-
-//time
-void GetMonth(int i);
-
-
-//Instruction
-int mkdir(DirectoryTree* dirTree, char* cmd);
-int rm(DirectoryTree* dirTree, char* cmd);
-int cd(DirectoryTree* dirTree, char* cmd);
-int pwd(DirectoryTree* dirTree, Stack* dirStack);
-int ls(DirectoryTree* dirTree, char* cmd);
-int cat(DirectoryTree* dirTree, char* cmd);
-int chmod(DirectoryTree* dirTree, char* cmd);
-int chown(DirectoryTree* dirTree, char* cmd);
-int find_(DirectoryTree* dirTree, char* cmd);
-void Instruction(DirectoryTree* dirTree, char* cmd);
-
-
-//user
+//user.c
 UserList* InitializeUser();
 int AddUser(UserList* userList, char* userName);
 void WriteUser(UserList* userList, UserNode* userNode);
@@ -148,6 +136,18 @@ UserNode* IsExistUser(UserList* userList, char* userName);
 char* GetUID(DirectoryNode* dirNode);
 char* GetGID(DirectoryNode* dirNode);
 int HasPermission(DirectoryNode* dirNode, char o);
+void Login(UserList* userList, DirectoryTree* dirTree);
+
+
+//stack.c
+int IsEmpty(Stack* dirStack);
+Stack* InitializeStack();
+int Push(Stack* dirStack, char* dirName);
+char* Pop(Stack* dirStack);
+
+
+//time.c
+void GetMonth(int i);
 
 
 //global variable

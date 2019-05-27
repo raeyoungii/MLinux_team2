@@ -407,7 +407,6 @@ int MovePath(DirectoryTree* dirTree, char* dirPath)
         //if input is absolute path
         if(strncmp(dirPath, "/",1) == 0){
             if(strtok(dirPath, "/") == NULL){
-                //printf("denied, directory doesn't exist.\n");
                 return -1;
             }
             dirTree->current = dirTree->root;
@@ -418,7 +417,6 @@ int MovePath(DirectoryTree* dirTree, char* dirPath)
             val = Movecurrent(dirTree, str);
             //if input path doesn't exist
             if(val != 0){
-                //printf("denied, directory doesn't exist.\n");
                 dirTree->current = tmpNode;
                 return -1;
             }

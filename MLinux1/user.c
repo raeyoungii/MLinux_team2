@@ -64,14 +64,16 @@ int AddUser(UserList* userList, char* userName)
 
 void WriteUser(UserList* userList, UserNode* userNode)
 {
-    fprintf(User, "%s %d %d %d %d %d %d %s", userNode->name, userNode->UID, userNode->GID, userNode->month, userNode->day, userNode->hour, userNode->minute, userNode->dir);
+    time(&ltime);
+    today = localtime(&ltime);
 
-    if(userNode == userList->head)
-        fprintf(User, " /");
-    if(userNode == userList->current)
-        fprintf(User, " c");
-    if(userNode != userList->tail)
-        fprintf(User, "\n");
+    usrList->current->month = today->tm_mon+1;
+    usrList->current->day = today->tm_mday;
+    usrList->current->hour = today->tm_hour;
+    usrList->current->minute = today->tm_min;
+
+    fprintf(User, "%s %d %d %d %d %d %d %s\n", userNode->name, userNode->UID, userNode->GID, userNode->month, userNode->day, userNode->hour, userNode->minute, userNode->dir);
+
     if(userNode->LinkNode != NULL){
         WriteUser(userList, userNode->LinkNode);
     }
@@ -109,24 +111,14 @@ int ReadUser(UserList* userList, char* tmp)
     str = strtok(NULL, " ");
     NewNode->minute = atoi(str);
     str = strtok(NULL, " ");
+    str[strlen(str)-1] = '\0';
     strncpy(NewNode->dir, str, MAX_DIR);
 
-
-    str = strtok(NULL, " ");
-    if(str == NULL){
-        userList->tail->LinkNode = NewNode;
-        userList->tail = NewNode;
-    }
-    else if(str[0] == '/'){
+    if(strcmp(NewNode->name, "root") == 0){
         userList->head = NewNode;
         userList->tail = NewNode;
-
-        str = strtok(NULL, " ");
-        if(str != NULL)
-            userList->current = NewNode;
     }
-    else if(str[0] == 'c'){
-        userList->current = NewNode;
+    else{
         userList->tail->LinkNode = NewNode;
         userList->tail = NewNode;
     }
@@ -146,6 +138,8 @@ UserList* LoadUserList()
 
     fclose(User);
 
+    userList->current = NULL;
+
     return userList;
 }
 
@@ -153,7 +147,7 @@ UserNode* IsExistUser(UserList* userList, char* userName)
 {
     UserNode* returnUser = NULL;
 
-    returnUser = userList->head->LinkNode;
+    returnUser = userList->head;
 
     while(returnUser != NULL){
         if(strcmp(returnUser->name, userName) == 0)
@@ -256,4 +250,25 @@ int HasPermission(DirectoryNode* dirNode, char o)
         }
     }
     return -1;
+}
+
+void Login(UserList* userList, DirectoryTree* dirTree)
+{
+    UserNode* tmpUser = NULL;
+    char userName[MAX_NAME];
+    char tmp[MAX_DIR];
+
+    while(1){
+    printf("Login: ");
+        gets(userName);
+        tmpUser = IsExistUser(userList, userName);
+        if(tmpUser != NULL){
+                userList->current = tmpUser;
+                break;
+        }
+        printf("유저가 없습니다. 다시 입력해주십시오.\n");
+    }
+
+    strcpy(tmp, userList->current->dir);
+    MovePath(dirTree, tmp);
 }
