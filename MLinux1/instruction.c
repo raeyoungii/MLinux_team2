@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "main.h"
+
 //command
 int mkdir(DirectoryTree* dirTree, char* cmd)
 {
@@ -575,6 +576,8 @@ void Instruction(DirectoryTree* dirTree, char* cmd)
         str = strtok(NULL, " ");
         find_(dirTree, str);
 
+    }else if(strcmp(str, "clear") == 0){
+        system("cls");
     }
     else{
         printf("잘못된 명령어 입니다\n");

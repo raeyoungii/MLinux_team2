@@ -20,7 +20,7 @@ int main()
         usr = '$';
 
     printf("Welcome to Team2_OS 12.0.1\n\n");
-    printf("Last login:");
+    printf("Last login: ");
     GetMonth(usrList->current->month);
     printf(" %d %02d:%02d\n", usrList->current->day, usrList->current->hour, usrList->current->minute);
     printf("[%s@os-Virtualbox %s] %c ",usrList->current->name, Linux->current->name, usr);
@@ -37,7 +37,7 @@ int main()
             continue;
         }
         if(strcmp(cmd, "exit") == 0){
-            printf("Logout");
+            printf("·Î±×¾Æ¿ô");
             SaveUserList(usrList);
             break;
         }
