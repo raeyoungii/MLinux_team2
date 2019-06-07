@@ -83,6 +83,7 @@ int chmod(DirectoryTree* dirTree, char* cmd);
 int chown(DirectoryTree* dirTree, char* cmd);
 int find_(DirectoryTree* dirTree, char* cmd);
 void Instruction(DirectoryTree* dirTree, char* cmd);
+void getPath2(DirectoryTree* dirTree, Stack* dirStack);
 
 
 //directory.c

@@ -84,7 +84,7 @@ DirectoryNode* IsExistDir(DirectoryTree* dirTree, char* dirName, char type)
 void getPath(DirectoryTree* dirTree, DirectoryNode* dirNode, Stack* dirStack)
 {
     //variables
-    DirectoryNode* tmpNode = dirNode->Parent;
+    DirectoryNode* tmpNode = NULL;
     char tmp[MAX_DIR] = "";
 
     tmpNode = dirNode->Parent;

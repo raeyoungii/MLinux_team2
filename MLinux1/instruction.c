@@ -588,3 +588,56 @@ void Instruction(DirectoryTree* dirTree, char* cmd)
     }
     return;
 }
+
+void getPath2(DirectoryTree* dirTree, Stack* dirStack)
+{
+    //variables
+    DirectoryNode* tmpNode = NULL;
+    char tmp[MAX_DIR] = "";
+    char tmp2[MAX_DIR] = "";
+    char usr;
+
+    if(usrList->current == usrList->head)
+        usr = '#';
+    else
+        usr = '$';
+
+    printf("[%s@os-Virtualbox ",usrList->current->name);
+
+    tmpNode = dirTree->current;
+
+    if(tmpNode == dirTree->root){
+        strcpy(tmp, "/");
+    }
+    else{
+        while(tmpNode->Parent != NULL){
+            Push(dirStack, tmpNode->name);
+            tmpNode = tmpNode->Parent;
+        }
+        while(IsEmpty(dirStack) == 0){
+                strcat(tmp, "/");
+                strcat(tmp ,Pop(dirStack));
+        }
+    }
+
+    strncpy(tmp2, tmp, strlen(usrList->current->dir));
+
+    if(strcmp(usrList->current->dir, tmp2) != 0){
+       printf("%s", tmp);
+    }
+    else{
+        tmpNode = dirTree->current;
+        while(tmpNode->Parent != NULL){
+            Push(dirStack, tmpNode->name);
+            tmpNode = tmpNode->Parent;
+        }
+        Pop(dirStack);
+        Pop(dirStack);
+        printf("~");
+        while(IsEmpty(dirStack) == 0){
+            printf("/");
+            printf("%s",Pop(dirStack));
+        }
+    }
+    printf("] %c ", usr);
+}
